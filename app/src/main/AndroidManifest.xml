@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DrawingApp">
         <activity
-            android:name=".view.MainActivity"
+            android:name=".draw.RectangleActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
