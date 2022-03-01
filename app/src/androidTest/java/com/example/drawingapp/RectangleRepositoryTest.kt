@@ -11,8 +11,6 @@ import org.junit.runner.RunWith
 class RectangleRepositoryTest {
     @Test
     fun useSetId(){
-        val rect = RectangleRepository()
-        val id = rect.setId()
-        assertEquals(id, RectangleId().getId())
+
     }
 }

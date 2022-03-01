@@ -1,3 +1,3 @@
 package com.example.drawingapp.data
 
-class RectangleSize(val width: Int, val height: Int)
+class RectangleSize(val width: Int = 150, val height: Int = 120)
