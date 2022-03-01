@@ -1,3 +1,9 @@
 package com.example.drawingapp.data
 
-class RectanglePoint(val x: Int, val y:Int)
+import kotlin.random.Random
+
+class RectanglePoint(
+    val x: Int = Random.nextInt(800),
+    val y: Int = Random.nextInt(800)
+)
+
