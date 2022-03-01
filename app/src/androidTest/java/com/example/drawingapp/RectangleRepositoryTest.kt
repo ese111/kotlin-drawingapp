@@ -8,22 +8,25 @@ import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 
+class TextInput(
+    override val count: Int = 1,
+    override val randomId: String = "fxd-0fz-4b9-fadfafs",
+    override val pointX: Int = 10,
+    override val pointY: Int = 200,
+    override val colorR: Int = 245,
+    override val colorG: Int = 0,
+    override val colorB: Int = 245,
+    override val alpha: Int = 9
+): InputFactory
+
 @RunWith(AndroidJUnit4::class)
 class RectangleRepositoryTest {
     @Test
     fun getString(){
         val rectangleRepository = RectangleRepository()
-        val rectangleCount = rectangleRepository.count +1
-        val randomId = "fxd-0fz-4b9-fadfafs"
-        rectangleRepository.putId(randomId)
-        val id = rectangleRepository.getId()
-        val point = RectanglePoint(10, 200)
-        val size = RectangleSize()
-        val color = RectangleColor(245,0,245)
-        val alpha = RectangleAlpha(9).alpha
-        val rectangle = Rectangle(rectangleCount, id, point, size, color, alpha)
-        Assert.assertEquals("Rect1 (fxd-0fz-4b9), X:10,Y:200, W150, H120, R:245, G:0, B:245, Alpha: 9",
-        rectangle.toString()
-            )
+        val testInput = TextInput()
+        assertEquals("Rect1 (fxd-0fz-4b9), X:10,Y:200, W150, H120, R:245, G:0, B:245, Alpha: 9",
+            rectangleRepository.getRectangleInfo(rectangleRepository.setRectangleInfo(testInput)))
     }
+
 }

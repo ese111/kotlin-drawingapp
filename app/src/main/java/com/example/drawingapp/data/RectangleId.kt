@@ -1,9 +1,5 @@
 package com.example.drawingapp.data
 
-import com.example.drawingapp.util.generateRandom
-import java.util.*
-import kotlin.collections.HashSet
-
 class RectangleId {
     private val idSet = HashSet<String>()
 
