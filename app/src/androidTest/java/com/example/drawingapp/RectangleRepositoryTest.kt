@@ -1,10 +1,8 @@
 package com.example.drawingapp
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.drawingapp.data.*
-import com.example.drawingapp.util.generateRandom
-import org.junit.Assert
-import org.junit.Assert.*
+import com.example.drawingapp.data.RectangleRepository
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -21,6 +19,7 @@ class TextInput(
 
 @RunWith(AndroidJUnit4::class)
 class RectangleRepositoryTest {
+
     @Test
     fun getString(){
         val rectangleRepository = RectangleRepository()

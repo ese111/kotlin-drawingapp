@@ -1,9 +1,10 @@
 package com.example.drawingapp.data
 
+import com.example.drawingapp.Contract
 import com.example.drawingapp.InputFactory
 import com.example.drawingapp.util.generateRandom
 
-class RectangleRepository {
+class RectangleRepository : Contract.Repository {
     private var count = 1
     private val rectangleId: RectangleId = RectangleId()
 
@@ -18,7 +19,9 @@ class RectangleRepository {
         }
     }
 
-    fun setRectangleInfo(inputFactory: InputFactory): Rectangle {
+    override fun getInputFactory() = RectangleInput(count)
+
+    override fun setRectangleInfo(inputFactory: InputFactory): Rectangle {
         putId(inputFactory.randomId)
         val id = rectangleId.getId()
         val point = RectanglePoint(inputFactory.pointX, inputFactory.pointY)
@@ -28,6 +31,6 @@ class RectangleRepository {
         return Rectangle(inputFactory.count , id, point, size, color, alpha)
     }
 
-    fun getRectangleInfo(rectangle: Rectangle) = rectangle.toString()
+    override fun getRectangleInfo(rectangle: Rectangle) = rectangle.toString()
 
 }
