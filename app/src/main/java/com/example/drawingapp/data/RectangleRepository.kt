@@ -34,10 +34,6 @@ class RectangleRepository : Contract.Repository {
 
     override fun getRectangleLog(rectangle: Rectangle) = rectangle.toString()
 
-    override fun onTouchRectangle(): Rectangle {
-        TODO("Not yet implemented")
-    }
-
     override fun setPlane(rectangle: Rectangle) = plane.setPlane(rectangle)
 
     override fun getPlane(index: Int) = plane.getPlane(index)
