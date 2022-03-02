@@ -1,18 +1,15 @@
 package com.example.drawingapp.draw
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
-import android.os.Bundle
-import android.os.Parcelable
-import android.support.annotation.RequiresPermission
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.example.drawingapp.Draw
-import com.example.drawingapp.data.*
-import com.orhanobut.logger.AndroidLogAdapter
+import com.example.drawingapp.data.Rectangle
+import com.example.drawingapp.data.RectangleColor
+import com.example.drawingapp.data.RectanglePoint
+import com.example.drawingapp.data.RectangleSize
 import com.orhanobut.logger.Logger
 
 class RectangleDraw : Draw, View {
@@ -50,7 +47,7 @@ class RectangleDraw : Draw, View {
                 rectangleCanvas.drawRect(it, paints[index])
                 index++
             }
-            strokeRect.forEach{
+            strokeRect.forEach {
                 rectangleCanvas.drawRect(it, stroke)
             }
         }
@@ -62,12 +59,10 @@ class RectangleDraw : Draw, View {
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                checkContains(pointF)
-                Logger.d("터치했다.")
+                setStroke(pointF)
             }
             MotionEvent.ACTION_MOVE -> {
-                checkContains(pointF)
-                Logger.d("터치하는중이다.")
+                setStroke(pointF)
             }
             else -> {
                 performClick()
@@ -77,24 +72,24 @@ class RectangleDraw : Draw, View {
         return true
     }
 
-    private fun initStroke(){
+    private fun initStroke() {
         stroke = Paint()
         stroke.color = Color.BLUE
-        stroke.strokeWidth = 40F
+        stroke.strokeWidth = 4F
         stroke.style = Paint.Style.STROKE
     }
 
-    private fun checkContains(pointF: PointF) {
-        rect.forEach{
-            Logger.d("${pointF.x.toInt()}, ${pointF.y.toInt()}")
-            Logger.d("${it.right}, ${it.left}, ${it.top}, ${it.bottom}")
-            if (it.checkRange(pointF.x.toInt(), pointF.y.toInt())) {
-                Logger.d("사각형 검사")
+    private fun setStroke(pointF: PointF) {
+        rect.forEach {
+            if (it.checkContains(pointF.x.toInt(), pointF.y.toInt())) {
                 strokeRect.add(it)
+                return
             }
         }
+        strokeRect.clear()
     }
-    private fun Rect.checkRange(x: Int, y: Int) =
+
+    private fun Rect.checkContains(x: Int, y: Int) =
         this.right >= x && this.left <= x && this.top >= y && this.bottom <= y
 
     override fun drawRectangle(rectangle: Rectangle) {
@@ -108,7 +103,9 @@ class RectangleDraw : Draw, View {
             rectangle.rectangleColor.green,
             rectangle.rectangleColor.blue
         )
+
         paint.style = Paint.Style.FILL
+
         paints.add(paint)
 
         val point = getPoints(rectangle.rectanglePoint, rectangle.rectangleSize)

@@ -14,13 +14,6 @@ class RectanglePresenter(
 
     override fun onClickLog() = view.getDrawMessage(getRectangleLog())
 
-    override fun onTouchRectangle() {
-        val rectangle = repository.onTouchRectangle()
-        rectangle.let {
-            view.setTouchRectangle(rectangle)
-        }
-    }
-
     override fun getRectangle() = repository.getRectangle(getInput())
 
     override fun setPlane() = repository.setPlane(getRectangle())

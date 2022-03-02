@@ -20,8 +20,6 @@ interface Contract {
 
         fun onClickLog()
 
-        fun onTouchRectangle()
-
         fun onClickDraw()
 
         fun getInput(): InputFactory
@@ -38,8 +36,6 @@ interface Contract {
         fun getRectangle(inputFactory: InputFactory): Rectangle
 
         fun getRectangleLog(rectangle: Rectangle): String
-
-        fun onTouchRectangle(): Rectangle
 
         fun setPlane(rectangle: Rectangle)
 
