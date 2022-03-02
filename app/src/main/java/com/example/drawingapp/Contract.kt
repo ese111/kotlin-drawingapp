@@ -1,5 +1,7 @@
 package com.example.drawingapp
 
+import android.graphics.Canvas
+import com.example.drawingapp.data.Plane
 import com.example.drawingapp.data.Rectangle
 
 interface Contract {
@@ -7,22 +9,42 @@ interface Contract {
 
         fun getDrawMessage(message: String)
 
+        fun setTouchRectangle(rectangle: Rectangle)
+
+        fun drawRectangle(rectangle: Rectangle)
     }
 
     interface Presenter {
 
-        fun getDrawRectangle(): String
+        fun getRectangleLog(): String
 
         fun onClickLog()
 
+        fun onTouchRectangle()
+
+        fun onClickDraw()
+
+        fun getInput(): InputFactory
+
+        fun getRectangle(): Rectangle
+
+        fun setPlane()
     }
 
     interface Repository {
 
         fun getInputFactory(): InputFactory
 
-        fun setRectangleInfo(inputFactory: InputFactory): Rectangle
+        fun getRectangle(inputFactory: InputFactory): Rectangle
 
-        fun getRectangleInfo(rectangle: Rectangle): String
+        fun getRectangleLog(rectangle: Rectangle): String
+
+        fun onTouchRectangle(): Rectangle
+
+        fun setPlane(rectangle: Rectangle)
+
+        fun getPlane(index: Int): Rectangle
+
+        fun getPlaneCount(): Int
     }
 }
