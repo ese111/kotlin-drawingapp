@@ -1,11 +1,13 @@
 package com.example.drawingapp.draw
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
+import android.os.Bundle
+import android.os.Parcelable
 import android.support.annotation.RequiresPermission
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.example.drawingapp.Draw
@@ -15,13 +17,21 @@ import com.orhanobut.logger.Logger
 
 class RectangleDraw : Draw, View {
 
-    constructor(context: Context?) : super(context)
+    constructor(context: Context?) : super(context) {
+        initStroke()
+    }
 
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
+        initStroke()
+    }
 
     private lateinit var rectangleCanvas: Canvas
 
-    private val points = mutableListOf<FloatArray>()
+    private lateinit var stroke: Paint
+
+    private val rect = mutableListOf<Rect>()
+
+    private val strokeRect = mutableListOf<Rect>()
 
     private val paints = mutableListOf<Paint>()
 
@@ -34,15 +44,58 @@ class RectangleDraw : Draw, View {
 
         rectangleCanvas.drawColor(Color.WHITE)
 
-        if(points.size != 0) {
+        if (rect.size != 0) {
             var index = 0
-            points.forEach{
-                rectangleCanvas.drawRect( it[0], it[1], it[2], it[3], paints[index])
+            rect.forEach {
+                rectangleCanvas.drawRect(it, paints[index])
                 index++
+            }
+            strokeRect.forEach{
+                rectangleCanvas.drawRect(it, stroke)
             }
         }
 
     }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        val pointF = PointF(event!!.x, event.y)
+
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                checkContains(pointF)
+                Logger.d("터치했다.")
+            }
+            MotionEvent.ACTION_MOVE -> {
+                checkContains(pointF)
+                Logger.d("터치하는중이다.")
+            }
+            else -> {
+                performClick()
+            }
+        }
+        invalidate()
+        return true
+    }
+
+    private fun initStroke(){
+        stroke = Paint()
+        stroke.color = Color.BLUE
+        stroke.strokeWidth = 40F
+        stroke.style = Paint.Style.STROKE
+    }
+
+    private fun checkContains(pointF: PointF) {
+        rect.forEach{
+            Logger.d("${pointF.x.toInt()}, ${pointF.y.toInt()}")
+            Logger.d("${it.right}, ${it.left}, ${it.top}, ${it.bottom}")
+            if (it.checkRange(pointF.x.toInt(), pointF.y.toInt())) {
+                Logger.d("사각형 검사")
+                strokeRect.add(it)
+            }
+        }
+    }
+    private fun Rect.checkRange(x: Int, y: Int) =
+        this.right >= x && this.left <= x && this.top >= y && this.bottom <= y
 
     override fun drawRectangle(rectangle: Rectangle) {
 
@@ -55,10 +108,12 @@ class RectangleDraw : Draw, View {
             rectangle.rectangleColor.green,
             rectangle.rectangleColor.blue
         )
-
+        paint.style = Paint.Style.FILL
         paints.add(paint)
 
-        points.add(getPoints(rectangle.rectanglePoint, rectangle.rectangleSize))
+        val point = getPoints(rectangle.rectanglePoint, rectangle.rectangleSize)
+
+        rect.add(Rect(point[0], point[1], point[2], point[3]))
 
         invalidate()
     }
@@ -66,12 +121,12 @@ class RectangleDraw : Draw, View {
     private fun getPoints(
         point: RectanglePoint,
         size: RectangleSize
-    ): FloatArray {
-        val start = getStart(point.x, size.width).toFloat()
-        val end = getEnd(point.x, size.width).toFloat()
-        val top = getTop(point.y, size.height).toFloat()
-        val bottom = getBottom(point.y, size.height).toFloat()
-        return floatArrayOf(start, top, end, bottom)
+    ): IntArray {
+        val start = getStart(point.x, size.width)
+        val end = getEnd(point.x, size.width)
+        val top = getTop(point.y, size.height)
+        val bottom = getBottom(point.y, size.height)
+        return intArrayOf(start, top, end, bottom)
     }
 
     private fun getStart(

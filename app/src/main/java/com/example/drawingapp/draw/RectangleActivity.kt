@@ -47,7 +47,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
     }
 
     override fun setTouchRectangle(rectangle: Rectangle) {
-        TODO("Not yet implemented")
+        
     }
 
 }
