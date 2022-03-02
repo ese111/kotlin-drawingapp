@@ -13,5 +13,4 @@ class RectanglePresenter(
 
     override fun onClickLog() = view.getDrawMessage(getDrawRectangle())
 
-
 }
