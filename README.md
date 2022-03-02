@@ -18,3 +18,4 @@
 - [x] MVP(Model-View-Presenter)
 
 - [ ] 터치 이벤트 위임
+
