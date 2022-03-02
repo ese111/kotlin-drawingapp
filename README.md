@@ -10,3 +10,11 @@
 ## 결과
 
 <img width="900" alt="mission1" src="https://user-images.githubusercontent.com/79190824/156215539-59fdc66e-0cf2-4dfb-90c0-9c3c47126f83.png">
+
+## 속성 변경 동작
+
+- [x] 특정한 속성이 바뀌면 화면에 다시 그림
+
+- [x] MVP(Model-View-Presenter)
+
+- [ ] 터치 이벤트 위임

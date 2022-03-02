@@ -26,12 +26,6 @@ class RectangleDraw : Draw, View {
 
     private lateinit var stroke: Paint
 
-    private val rect = mutableListOf<Rect>()
-
-    private val strokeRect = mutableListOf<Rect>()
-
-    private val paints = mutableListOf<Paint>()
-
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
@@ -59,10 +53,14 @@ class RectangleDraw : Draw, View {
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                setStroke(pointF)
+                if(findRectangle(pointF) == -1){
+                    strokeRect.clear()
+                }
             }
             MotionEvent.ACTION_MOVE -> {
-                setStroke(pointF)
+                if(findRectangle(pointF) == -1){
+                    strokeRect.clear()
+                }
             }
             else -> {
                 performClick()
@@ -79,14 +77,16 @@ class RectangleDraw : Draw, View {
         stroke.style = Paint.Style.STROKE
     }
 
-    private fun setStroke(pointF: PointF) {
+    private fun findRectangle(pointF: PointF): Int {
+        var count = 0
         rect.forEach {
             if (it.checkContains(pointF.x.toInt(), pointF.y.toInt())) {
                 strokeRect.add(it)
-                return
+                return count
             }
+            count++
         }
-        strokeRect.clear()
+        return -1
     }
 
     private fun Rect.checkContains(x: Int, y: Int) =
@@ -97,6 +97,8 @@ class RectangleDraw : Draw, View {
         val paint = Paint()
 
         val color = setColor(rectangle.rectangleColor).toInt(16)
+
+        rectangleColor.add(color)
 
         paint.color = Color.rgb(
             rectangle.rectangleColor.red,
@@ -113,6 +115,10 @@ class RectangleDraw : Draw, View {
         rect.add(Rect(point[0], point[1], point[2], point[3]))
 
         invalidate()
+    }
+
+    override fun getColor() {
+        TODO("Not yet implemented")
     }
 
     private fun getPoints(

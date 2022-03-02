@@ -33,7 +33,6 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
             presenter.setPlane()
             presenter.onClickDraw()
         }
-
     }
 
     override fun getDrawMessage(message: String) {
