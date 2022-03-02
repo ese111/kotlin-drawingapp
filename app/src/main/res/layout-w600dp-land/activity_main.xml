@@ -7,11 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".draw.RectangleActivity">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-
     <Button
         android:id="@+id/btn_make_rectangle"
         android:layout_width="wrap_content"
@@ -22,12 +17,19 @@
         app:layout_constraintStart_toStartOf="parent"
         />
 
-    <include layout="@layout/navbar"
-        android:layout_height="match_parent"
+    <include
+        android:id="@+id/include"
+        layout="@layout/navbar"
         android:layout_width="150dp"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-         />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.example.drawingapp.draw.RectangleDraw
+        android:id="@+id/draw_rectangle"
+        android:layout_width="580dp"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toStartOf="@+id/include" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

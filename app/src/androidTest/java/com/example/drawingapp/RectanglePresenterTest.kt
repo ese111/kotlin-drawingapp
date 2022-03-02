@@ -1,11 +1,12 @@
 package com.example.drawingapp
 
+import android.graphics.Canvas
+import com.example.drawingapp.data.*
 import com.example.drawingapp.draw.RectanglePresenter
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mock
 import org.mockito.*
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 
 
 class RectanglePresenterTest {
@@ -19,14 +20,30 @@ class RectanglePresenterTest {
     private lateinit var presenter: RectanglePresenter
 
     @Before
-    fun setRectanglePresenter(){
+    fun setRectanglePresenter() {
         MockitoAnnotations.openMocks(this)
         presenter = RectanglePresenter(view, repository)
     }
 
     @Test
-    fun test_drawRectangle(){
+    fun test_rectangleLog() {
         presenter.onClickLog()
-        verify(view).getDrawMessage(presenter.getDrawRectangle())
+        verify(view).getDrawMessage(presenter.getRectangleLog())
     }
+
+    @Test
+    fun test_onTouchRectangle() {
+        presenter.onTouchRectangle()
+        verify(repository).onTouchRectangle()
+    }
+
+    @Test
+    fun test_onClickDraw() {
+        val rectangle = repository.getRectangle(repository.getInputFactory())
+        `when`(repository.getPlaneCount()).thenReturn(1)
+        `when`(repository.getPlane(0)).thenReturn(rectangle)
+        presenter.onClickDraw()
+        verify(view).drawRectangle(rectangle)
+    }
+
 }

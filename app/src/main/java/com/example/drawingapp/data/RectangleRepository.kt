@@ -7,6 +7,7 @@ import com.example.drawingapp.util.generateRandom
 class RectangleRepository : Contract.Repository {
     private var count = 1
     private val rectangleId: RectangleId = RectangleId()
+    private val plane = Plane()
 
     private fun putId(randomId: String = generateRandom()) {
         while (true) {
@@ -21,7 +22,7 @@ class RectangleRepository : Contract.Repository {
 
     override fun getInputFactory() = RectangleInput(count)
 
-    override fun setRectangleInfo(inputFactory: InputFactory): Rectangle {
+    override fun getRectangle(inputFactory: InputFactory): Rectangle {
         putId(inputFactory.randomId)
         val id = rectangleId.getId()
         val point = RectanglePoint(inputFactory.pointX, inputFactory.pointY)
@@ -31,6 +32,15 @@ class RectangleRepository : Contract.Repository {
         return Rectangle(inputFactory.count , id, point, size, color, alpha)
     }
 
-    override fun getRectangleInfo(rectangle: Rectangle) = rectangle.toString()
+    override fun getRectangleLog(rectangle: Rectangle) = rectangle.toString()
 
+    override fun onTouchRectangle(): Rectangle {
+        TODO("Not yet implemented")
+    }
+
+    override fun setPlane(rectangle: Rectangle) = plane.setPlane(rectangle)
+
+    override fun getPlane(index: Int) = plane.getPlane(index)
+
+    override fun getPlaneCount() = plane.getCount()
 }
