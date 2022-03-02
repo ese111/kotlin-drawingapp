@@ -5,7 +5,8 @@ import com.example.drawingapp.data.Rectangle
 
 class RectanglePresenter(
     private val view: Contract.View,
-    private val repository: Contract.Repository) : Contract.Presenter {
+    private val repository: Contract.Repository
+) : Contract.Presenter {
 
     override fun getRectangleLog() = repository.getRectangleLog(getRectangle())
 
@@ -25,7 +26,7 @@ class RectanglePresenter(
     override fun setPlane() = repository.setPlane(getRectangle())
 
     override fun onClickDraw() {
-        for (i in 0 until repository.getPlaneCount()){
+        for (i in 0 until repository.getPlaneCount()) {
             val rectangle = repository.getPlane(i)
             view.drawRectangle(rectangle)
         }

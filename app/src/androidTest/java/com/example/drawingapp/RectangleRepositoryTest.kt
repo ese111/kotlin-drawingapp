@@ -15,17 +15,19 @@ class TextInput(
     override val colorG: Int = 0,
     override val colorB: Int = 245,
     override val alpha: Int = 9
-): InputFactory
+) : InputFactory
 
 @RunWith(AndroidJUnit4::class)
 class RectangleRepositoryTest {
 
     @Test
-    fun getString(){
+    fun getString() {
         val rectangleRepository = RectangleRepository()
         val testInput = TextInput()
-        assertEquals("Rect1 (fxd-0fz-4b9), X:10,Y:200, W150, H120, R:245, G:0, B:245, Alpha: 9",
-            rectangleRepository.getRectangleLog(rectangleRepository.getRectangle(testInput)))
+        assertEquals(
+            "Rect1 (fxd-0fz-4b9), X:10,Y:200, W150, H120, R:245, G:0, B:245, Alpha: 9",
+            rectangleRepository.getRectangleLog(rectangleRepository.getRectangle(testInput))
+        )
     }
 
 }
