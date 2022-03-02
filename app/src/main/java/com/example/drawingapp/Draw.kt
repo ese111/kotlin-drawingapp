@@ -4,4 +4,6 @@ import com.example.drawingapp.data.Rectangle
 
 interface Draw {
     fun drawRectangle(rectangle: Rectangle)
+
+    fun getColor()
 }
