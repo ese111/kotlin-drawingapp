@@ -1,7 +1,7 @@
 package com.example.drawingapp.draw
 
-import android.graphics.Canvas
 import android.os.Bundle
+import android.view.MotionEvent
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.drawingapp.Contract
@@ -15,12 +15,13 @@ import com.orhanobut.logger.Logger
 class RectangleActivity : AppCompatActivity(), Contract.View {
 
     private lateinit var presenter: Contract.Presenter
-
+    private lateinit var draw: RectangleDraw
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         Logger.addLogAdapter(AndroidLogAdapter())
+        draw = findViewById(R.id.draw_rectangle)
         presenter = RectanglePresenter(this, RectangleRepository())
 //        presenter.onClickLog()
 //        presenter.onClickLog()
@@ -35,18 +36,31 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
         }
     }
 
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        val count = draw.onClickRectangleIndex()
+        setColorText(count)
+        return true
+    }
+
+    override fun setColorText(count: Int) = when (count != -1) {
+        true -> {
+            var color: Button = findViewById(R.id.tv_background_color)
+            color.text = "#${draw.getColor(count)}"
+        }
+
+        false -> {
+            var color: Button = findViewById(R.id.tv_background_color)
+            color.text = ""
+        }
+    }
+
     override fun getDrawMessage(message: String) {
         Logger.i(message)
     }
 
     override fun drawRectangle(rectangle: Rectangle) {
-        val draw: RectangleDraw = findViewById(R.id.draw_rectangle)
         draw.drawRectangle(rectangle)
         Logger.d(rectangle.toString())
-    }
-
-    override fun setTouchRectangle(rectangle: Rectangle) {
-        
     }
 
 }

@@ -21,13 +21,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/tv_background_color"
         android:layout_width="65dp"
         android:layout_height="25dp"
         android:layout_marginStart="22dp"
         android:layout_marginTop="5dp"
         android:background="@drawable/tv_edge"
+        android:backgroundTint="#D1D1D1"
         android:gravity="center"
         android:text="#D6DFE9"
         android:textAlignment="center"

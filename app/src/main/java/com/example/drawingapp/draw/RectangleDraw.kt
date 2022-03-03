@@ -10,7 +10,6 @@ import com.example.drawingapp.data.Rectangle
 import com.example.drawingapp.data.RectangleColor
 import com.example.drawingapp.data.RectanglePoint
 import com.example.drawingapp.data.RectangleSize
-import com.orhanobut.logger.Logger
 
 class RectangleDraw : Draw, View {
 
@@ -30,9 +29,11 @@ class RectangleDraw : Draw, View {
 
     private val rect = mutableListOf<Rect>()
 
-    private val strokeRect = mutableListOf<Rect>()
+    private val strokeRect = mutableSetOf<Rect>()
 
-    private val rectangleColor = mutableListOf<Int>()
+    private var rectangleColor = mutableListOf<String>()
+
+    private var onClickRectangle = -1
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
@@ -56,18 +57,21 @@ class RectangleDraw : Draw, View {
 
     }
 
+    override fun onClickRectangleIndex() = onClickRectangle
+
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val pointF = PointF(event!!.x, event.y)
-
-        when (event.action) {
+        when (event!!.action) {
             MotionEvent.ACTION_DOWN -> {
-                if(findRectangle(pointF) == -1){
-                    strokeRect.clear()
+                onClickRectangle = findRectangle(pointF)
+                if (onClickRectangle == -1) {
+                    strokeRectReset()
                 }
             }
             MotionEvent.ACTION_MOVE -> {
-                if(findRectangle(pointF) == -1){
-                    strokeRect.clear()
+                onClickRectangle = findRectangle(pointF)
+                if (onClickRectangle == -1) {
+                    strokeRectReset()
                 }
             }
             else -> {
@@ -75,7 +79,7 @@ class RectangleDraw : Draw, View {
             }
         }
         invalidate()
-        return true
+        return super.onTouchEvent(event)
     }
 
     private fun initStroke() {
@@ -85,7 +89,7 @@ class RectangleDraw : Draw, View {
         stroke.style = Paint.Style.STROKE
     }
 
-    private fun findRectangle(pointF: PointF): Int {
+    override fun findRectangle(pointF: PointF): Int {
         var count = 0
         rect.forEach {
             if (it.checkContains(pointF.x.toInt(), pointF.y.toInt())) {
@@ -97,6 +101,8 @@ class RectangleDraw : Draw, View {
         return -1
     }
 
+    override fun strokeRectReset() = strokeRect.clear()
+
     private fun Rect.checkContains(x: Int, y: Int) =
         this.right >= x && this.left <= x && this.top >= y && this.bottom <= y
 
@@ -104,9 +110,7 @@ class RectangleDraw : Draw, View {
 
         val paint = Paint()
 
-        val color = setColor(rectangle.rectangleColor).toInt(16)
-
-        rectangleColor.add(color)
+        rectangleColor.add(setColor(rectangle.rectangleColor))
 
         paint.color = Color.rgb(
             rectangle.rectangleColor.red,
@@ -125,9 +129,7 @@ class RectangleDraw : Draw, View {
         invalidate()
     }
 
-    override fun getColor() {
-        TODO("Not yet implemented")
-    }
+    override fun getColor(index: Int) = rectangleColor[index]
 
     private fun getPoints(
         point: RectanglePoint,

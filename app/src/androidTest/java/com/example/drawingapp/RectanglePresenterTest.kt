@@ -32,12 +32,6 @@ class RectanglePresenterTest {
     }
 
     @Test
-    fun test_onTouchRectangle() {
-        presenter.onTouchRectangle()
-        verify(repository).onTouchRectangle()
-    }
-
-    @Test
     fun test_onClickDraw() {
         val rectangle = repository.getRectangle(repository.getInputFactory())
         `when`(repository.getPlaneCount()).thenReturn(1)
