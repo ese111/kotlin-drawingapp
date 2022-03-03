@@ -26,6 +26,14 @@ class RectangleDraw : Draw, View {
 
     private lateinit var stroke: Paint
 
+    private val paints = mutableListOf<Paint>()
+
+    private val rect = mutableListOf<Rect>()
+
+    private val strokeRect = mutableListOf<Rect>()
+
+    private val rectangleColor = mutableListOf<Int>()
+
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
