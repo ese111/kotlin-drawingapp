@@ -5,11 +5,13 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.example.drawingapp.Contract
 import com.example.drawingapp.Draw
 import com.example.drawingapp.data.Rectangle
 import com.example.drawingapp.data.RectangleColor
 import com.example.drawingapp.data.RectanglePoint
 import com.example.drawingapp.data.RectangleSize
+import java.util.logging.Logger
 
 class RectangleDraw : Draw, View {
 
@@ -58,29 +60,6 @@ class RectangleDraw : Draw, View {
     }
 
     override fun onClickRectangleIndex() = onClickRectangle
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        val pointF = PointF(event!!.x, event.y)
-        when (event!!.action) {
-            MotionEvent.ACTION_DOWN -> {
-                onClickRectangle = findRectangle(pointF)
-                if (onClickRectangle == -1) {
-                    strokeRectReset()
-                }
-            }
-            MotionEvent.ACTION_MOVE -> {
-                onClickRectangle = findRectangle(pointF)
-                if (onClickRectangle == -1) {
-                    strokeRectReset()
-                }
-            }
-            else -> {
-                performClick()
-            }
-        }
-        invalidate()
-        return super.onTouchEvent(event)
-    }
 
     private fun initStroke() {
         stroke = Paint()

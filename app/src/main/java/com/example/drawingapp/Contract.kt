@@ -1,5 +1,6 @@
 package com.example.drawingapp
 
+import android.graphics.PointF
 import com.example.drawingapp.data.Rectangle
 
 interface Contract {
@@ -10,6 +11,7 @@ interface Contract {
         fun drawRectangle(rectangle: Rectangle)
 
         fun setColorText(count: Int)
+        fun onTouchRectangle(pointF: PointF)
     }
 
     interface Presenter {

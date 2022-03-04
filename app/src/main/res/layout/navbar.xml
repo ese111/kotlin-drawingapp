@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="SmallSp" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/tv_background_color"
         android:layout_width="65dp"
         android:layout_height="25dp"

@@ -1,5 +1,7 @@
 package com.example.drawingapp.draw
 
+import android.annotation.SuppressLint
+import android.graphics.PointF
 import android.os.Bundle
 import android.view.MotionEvent
 import android.widget.Button
@@ -39,17 +41,41 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val count = draw.onClickRectangleIndex()
         setColorText(count)
+        val pointF = PointF(event!!.x, event!!.y - 176F)
+        when (event!!.action) {
+            MotionEvent.ACTION_DOWN -> {
+                Logger.d("main ${event.x}, ${event.y}")
+                onTouchRectangle(pointF)
+            }
+            MotionEvent.ACTION_MOVE -> {
+                Logger.d("main ${event.x}, ${event.y}")
+                onTouchRectangle(pointF)
+            }
+            else -> {
+                Logger.d("main ${event.x}, ${event.y}")
+                draw.performClick()
+            }
+        }
+        draw.invalidate()
         return true
     }
 
+    override fun onTouchRectangle(pointF: PointF) {
+        val count = draw.findRectangle(pointF)
+        if (count == -1) {
+            draw.strokeRectReset()
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
     override fun setColorText(count: Int) = when (count != -1) {
         true -> {
-            var color: Button = findViewById(R.id.tv_background_color)
+            val color: Button = findViewById(R.id.tv_background_color)
             color.text = "#${draw.getColor(count)}"
         }
 
         false -> {
-            var color: Button = findViewById(R.id.tv_background_color)
+            val color: Button = findViewById(R.id.tv_background_color)
             color.text = ""
         }
     }
