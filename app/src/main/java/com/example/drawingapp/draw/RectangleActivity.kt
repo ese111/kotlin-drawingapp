@@ -10,6 +10,7 @@ import com.example.drawingapp.Contract
 import com.example.drawingapp.R
 import com.example.drawingapp.data.Rectangle
 import com.example.drawingapp.data.RectangleRepository
+import com.google.android.material.slider.Slider
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 
@@ -34,7 +35,8 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
         drawButton.setOnClickListener() {
 //            presenter.onClickLog()
             presenter.setPlane()
-            presenter.onClickDraw()
+            Logger.i("plane data change")
+            presenter.getPlaneData()
         }
     }
 

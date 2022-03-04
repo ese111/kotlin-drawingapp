@@ -20,13 +20,13 @@ interface Contract {
 
         fun onClickLog()
 
-        fun onClickDraw()
-
         fun getInput(): InputFactory
 
         fun getRectangle(): Rectangle
 
         fun setPlane()
+
+        fun getPlaneData()
     }
 
     interface Repository {

@@ -18,7 +18,7 @@ class RectanglePresenter(
 
     override fun setPlane() = repository.setPlane(getRectangle())
 
-    override fun onClickDraw() {
+    override fun getPlaneData() {
         for (i in 0 until repository.getPlaneCount()) {
             val rectangle = repository.getPlane(i)
             view.drawRectangle(rectangle)
