@@ -96,7 +96,8 @@ class RectangleDraw : View {
         invalidate()
     }
 
-    private fun setColorList(_rectangleColor: RectangleColor) = rectangleColor.add(setColor(_rectangleColor))
+    private fun setColorList(_rectangleColor: RectangleColor) =
+        rectangleColor.add(setColor(_rectangleColor))
 
     private fun setPaints(_rectangle: Rectangle) {
         val paint = Paint()
@@ -151,7 +152,6 @@ class RectangleDraw : View {
     private fun setColor(rectangleColor: RectangleColor) = rectangleColor.red.toString(16) +
             rectangleColor.blue.toString(16) +
             rectangleColor.green.toString(16)
-
 
 
 }

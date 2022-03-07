@@ -30,7 +30,7 @@ class RectanglePresenter(
     }
 
     override fun getDrawRectangle() {
-        val rectangle = repository.getPlane(repository.getPlaneCount()-1)
+        val rectangle = repository.getPlane(repository.getPlaneCount() - 1)
         view.drawRectangle(rectangle)
     }
 }
