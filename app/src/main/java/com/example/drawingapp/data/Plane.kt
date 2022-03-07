@@ -10,13 +10,12 @@ class Plane {
     //    index를 넘기면 해당 사각형 모델을 return한다.
     fun getPlane(index: Int) = rectangleList[index]
 
-    //    터치 좌표를 넘기면, 해당 위치를 포함하는 사각형이 있는지 판단한다.
-    fun onTouchRectangle() {
-
-    }
-
     fun setPlane(rectangle: Rectangle) {
         rectangleList.add(rectangle)
+    }
+
+    fun setAlpha(index: Int, alpha: Int) {
+        rectangleList[index].setAlpha(alpha)
     }
 
 }

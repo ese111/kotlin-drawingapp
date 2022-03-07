@@ -1,15 +1,13 @@
 package com.example.drawingapp.data
 
-import com.example.drawingapp.Contract
 import com.example.drawingapp.InputFactory
-import com.example.drawingapp.util.generateRandom
 
-class RectangleRepository : Contract.Repository {
+class RectangleRepository : Repository {
     private var count = 1
     private val rectangleId: RectangleId = RectangleId()
     private val plane = Plane()
 
-    private fun putId(randomId: String = generateRandom()) {
+    private fun putId(randomId: String) {
         while (true) {
             val id = rectangleId.makeRandomId(randomId)
             if(rectangleId.checkId(id)) {
@@ -28,7 +26,7 @@ class RectangleRepository : Contract.Repository {
         val point = RectanglePoint(inputFactory.pointX, inputFactory.pointY)
         val size = RectangleSize()
         val color = RectangleColor(inputFactory.colorR,inputFactory.colorG,inputFactory.colorB)
-        val alpha = RectangleAlpha(inputFactory.alpha).alpha
+        val alpha = inputFactory.alpha
         return Rectangle(inputFactory.count , id, point, size, color, alpha)
     }
 
@@ -39,4 +37,11 @@ class RectangleRepository : Contract.Repository {
     override fun getPlane(index: Int) = plane.getPlane(index)
 
     override fun getPlaneCount() = plane.getCount()
+
+    override fun setAlpha(index: Int, value: Int) {
+        plane.setAlpha(index, value)
+    }
+
+    override fun getAlpha(index: Int) = getPlane(index).getAlpha()
+
 }

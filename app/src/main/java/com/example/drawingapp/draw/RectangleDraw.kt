@@ -3,17 +3,13 @@ package com.example.drawingapp.draw
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
-import com.example.drawingapp.Contract
-import com.example.drawingapp.Draw
 import com.example.drawingapp.data.Rectangle
 import com.example.drawingapp.data.RectangleColor
 import com.example.drawingapp.data.RectanglePoint
 import com.example.drawingapp.data.RectangleSize
-import java.util.logging.Logger
 
-class RectangleDraw : Draw, View {
+class RectangleDraw : View {
 
     constructor(context: Context?) : super(context) {
         initStroke()
@@ -33,9 +29,9 @@ class RectangleDraw : Draw, View {
 
     private val strokeRect = mutableSetOf<Rect>()
 
-    private var rectangleColor = mutableListOf<String>()
+    private val rectangleColor = mutableListOf<String>()
 
-    private var onClickRectangle = -1
+    private var getClickRectangle = -1
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
@@ -56,10 +52,9 @@ class RectangleDraw : Draw, View {
                 rectangleCanvas.drawRect(it, stroke)
             }
         }
-
     }
 
-    override fun onClickRectangleIndex() = onClickRectangle
+    fun getClickRectangle() = getClickRectangle
 
     private fun initStroke() {
         stroke = Paint()
@@ -68,47 +63,59 @@ class RectangleDraw : Draw, View {
         stroke.style = Paint.Style.STROKE
     }
 
-    override fun findRectangle(pointF: PointF): Int {
+    fun findRectangle(pointF: PointF): Int {
         var count = 0
         rect.forEach {
             if (it.checkContains(pointF.x.toInt(), pointF.y.toInt())) {
                 strokeRect.add(it)
+                getClickRectangle = count
                 return count
             }
             count++
         }
-        return -1
+        getClickRectangle = -1
+        return getClickRectangle
     }
 
-    override fun strokeRectReset() = strokeRect.clear()
+    fun strokeRectReset() = strokeRect.clear()
 
     private fun Rect.checkContains(x: Int, y: Int) =
         this.right >= x && this.left <= x && this.top >= y && this.bottom <= y
 
-    override fun drawRectangle(rectangle: Rectangle) {
+    fun getColor(index: Int) = rectangleColor[index]
 
-        val paint = Paint()
-
-        rectangleColor.add(setColor(rectangle.rectangleColor))
-
-        paint.color = Color.rgb(
-            rectangle.rectangleColor.red,
-            rectangle.rectangleColor.green,
-            rectangle.rectangleColor.blue
-        )
-
-        paint.style = Paint.Style.FILL
-
-        paints.add(paint)
-
-        val point = getPoints(rectangle.rectanglePoint, rectangle.rectangleSize)
-
-        rect.add(Rect(point[0], point[1], point[2], point[3]))
-
+    fun drawRectangle(rectangle: Rectangle) {
+        setRect(rectangle)
+        setPaints(rectangle)
+        setColorList(rectangle.rectangleColor)
         invalidate()
     }
 
-    override fun getColor(index: Int) = rectangleColor[index]
+    fun changeAlpha(rectangle: Rectangle, index: Int) {
+        paints[index].alpha = rectangle.getAlpha() * 25
+        invalidate()
+    }
+
+    private fun setColorList(_rectangleColor: RectangleColor) = rectangleColor.add(setColor(_rectangleColor))
+
+    private fun setPaints(_rectangle: Rectangle) {
+        val paint = Paint()
+
+        paint.color = Color.argb(
+            _rectangle.getAlpha() * 25,
+            _rectangle.rectangleColor.red,
+            _rectangle.rectangleColor.green,
+            _rectangle.rectangleColor.blue
+        )
+
+        paint.style = Paint.Style.FILL
+        paints.add(paint)
+    }
+
+    private fun setRect(rectangle: Rectangle) {
+        val point = getPoints(rectangle.rectanglePoint, rectangle.rectangleSize)
+        rect.add(Rect(point[0], point[1], point[2], point[3]))
+    }
 
     private fun getPoints(
         point: RectanglePoint,
@@ -144,5 +151,7 @@ class RectangleDraw : Draw, View {
     private fun setColor(rectangleColor: RectangleColor) = rectangleColor.red.toString(16) +
             rectangleColor.blue.toString(16) +
             rectangleColor.green.toString(16)
+
+
 
 }

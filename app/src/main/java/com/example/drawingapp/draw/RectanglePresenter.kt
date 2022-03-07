@@ -1,11 +1,11 @@
 package com.example.drawingapp.draw
 
 import com.example.drawingapp.Contract
-import com.example.drawingapp.data.Rectangle
+import com.example.drawingapp.data.Repository
 
 class RectanglePresenter(
     private val view: Contract.View,
-    private val repository: Contract.Repository
+    private val repository: Repository
 ) : Contract.Presenter {
 
     override fun getRectangleLog() = repository.getRectangleLog(getRectangle())
@@ -18,11 +18,19 @@ class RectanglePresenter(
 
     override fun setPlane() = repository.setPlane(getRectangle())
 
-    override fun getPlaneData() {
-        for (i in 0 until repository.getPlaneCount()) {
-            val rectangle = repository.getPlane(i)
-            view.drawRectangle(rectangle)
-        }
+    override fun setAlpha(index: Int, value: Int) {
+        repository.setAlpha(index, value)
     }
 
+    override fun getAlpha(index: Int) = repository.getAlpha(index)
+
+    override fun getDrawRectangle(index: Int) {
+        val rectangle = repository.getPlane(index)
+        view.changeAlpha(rectangle, index)
+    }
+
+    override fun getDrawRectangle() {
+        val rectangle = repository.getPlane(repository.getPlaneCount()-1)
+        view.drawRectangle(rectangle)
+    }
 }
