@@ -4,6 +4,7 @@ import android.graphics.PointF
 import com.example.drawingapp.data.Rectangle
 
 interface Contract {
+
     interface View {
 
         fun getDrawMessage(message: String)
@@ -11,7 +12,12 @@ interface Contract {
         fun drawRectangle(rectangle: Rectangle)
 
         fun setColorText(count: Int)
+
         fun onTouchRectangle(pointF: PointF)
+
+        fun changeAlpha(rectangle: Rectangle, index: Int)
+
+        fun setAlpha(index: Int, value: Int)
     }
 
     interface Presenter {
@@ -20,27 +26,18 @@ interface Contract {
 
         fun onClickLog()
 
-        fun onClickDraw()
+        fun getDrawRectangle(index: Int)
 
         fun getInput(): InputFactory
 
         fun getRectangle(): Rectangle
 
+        fun setAlpha(index: Int, value: Int)
+
         fun setPlane()
-    }
 
-    interface Repository {
+        fun getAlpha(index: Int): Int
 
-        fun getInputFactory(): InputFactory
-
-        fun getRectangle(inputFactory: InputFactory): Rectangle
-
-        fun getRectangleLog(rectangle: Rectangle): String
-
-        fun setPlane(rectangle: Rectangle)
-
-        fun getPlane(index: Int): Rectangle
-
-        fun getPlaneCount(): Int
+        fun getDrawRectangle()
     }
 }

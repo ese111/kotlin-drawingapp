@@ -1,5 +1,6 @@
 package com.example.drawingapp.data
 
+
 class RectangleId {
     private val idSet = HashSet<String>()
 
@@ -10,7 +11,9 @@ class RectangleId {
     fun getId() =
         when (idSet.isEmpty()) {
             true -> "사각형이 없습니다."
-            false -> idSet.elementAt(idSet.size - 1)
+            false -> {
+                idSet.elementAt(idSet.size - 1)
+            }
         }
 
     fun makeRandomId(randomId: String): String {
