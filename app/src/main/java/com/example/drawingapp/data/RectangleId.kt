@@ -1,7 +1,5 @@
 package com.example.drawingapp.data
 
-import com.orhanobut.logger.Logger
-
 
 class RectangleId {
     private val idSet = mutableSetOf<String>()
@@ -14,9 +12,6 @@ class RectangleId {
         when (idSet.isEmpty()) {
             true -> "사각형이 없습니다."
             false -> {
-                idSet.forEach {
-                    Logger.i("$it")
-                }
                 idSet.elementAt(idSet.size - 1)
             }
         }

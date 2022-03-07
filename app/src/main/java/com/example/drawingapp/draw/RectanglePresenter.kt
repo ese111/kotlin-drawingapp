@@ -2,7 +2,7 @@ package com.example.drawingapp.draw
 
 import com.example.drawingapp.Contract
 import com.example.drawingapp.data.Repository
-import com.orhanobut.logger.Logger
+
 
 class RectanglePresenter(
     private val view: Contract.View,
