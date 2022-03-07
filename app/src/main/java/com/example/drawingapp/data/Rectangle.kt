@@ -9,7 +9,7 @@ class Rectangle(
     private var alpha: Int
 ) {
     fun setAlpha(value: Int) {
-         alpha = value
+        alpha = value
     }
 
     fun getAlpha() = alpha

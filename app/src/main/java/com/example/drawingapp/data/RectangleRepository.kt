@@ -10,7 +10,7 @@ class RectangleRepository : Repository {
     private fun putId(randomId: String) {
         while (true) {
             val id = rectangleId.makeRandomId(randomId)
-            if(rectangleId.checkId(id)) {
+            if (rectangleId.checkId(id)) {
                 rectangleId.putId(id)
                 count++
                 return
@@ -25,9 +25,9 @@ class RectangleRepository : Repository {
         val id = rectangleId.getId()
         val point = RectanglePoint(inputFactory.pointX, inputFactory.pointY)
         val size = RectangleSize()
-        val color = RectangleColor(inputFactory.colorR,inputFactory.colorG,inputFactory.colorB)
+        val color = RectangleColor(inputFactory.colorR, inputFactory.colorG, inputFactory.colorB)
         val alpha = inputFactory.alpha
-        return Rectangle(inputFactory.count , id, point, size, color, alpha)
+        return Rectangle(inputFactory.count, id, point, size, color, alpha)
     }
 
     override fun getRectangleLog(rectangle: Rectangle) = rectangle.toString()

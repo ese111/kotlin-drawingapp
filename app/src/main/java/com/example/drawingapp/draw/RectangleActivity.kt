@@ -54,7 +54,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
 
             @SuppressLint("RestrictedApi")
             override fun onStopTrackingTouch(slider: Slider) {
-                if(slider.value < 10F){
+                if (slider.value < 10F) {
                     slider.value = 10F
                 }
                 if (choiceRect == -1) {
