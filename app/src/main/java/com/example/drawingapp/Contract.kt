@@ -1,5 +1,6 @@
 package com.example.drawingapp
 
+import android.graphics.Canvas
 import android.graphics.PointF
 import com.example.drawingapp.data.Rectangle
 
@@ -39,5 +40,7 @@ interface Contract {
         fun getAlpha(index: Int): Int
 
         fun getDrawRectangle()
+
     }
+
 }

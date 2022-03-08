@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.drawingapp.data.Rectangle
 import com.example.drawingapp.data.RectangleColor
 import com.example.drawingapp.data.RectanglePoint
@@ -29,8 +31,6 @@ class RectangleDraw : View {
 
     private val strokeRect = mutableSetOf<Rect>()
 
-    private val rectangleColor = mutableListOf<String>()
-
     private var getClickRectangle = -1
 
     override fun onDraw(canvas: Canvas?) {
@@ -41,11 +41,10 @@ class RectangleDraw : View {
         }
 
         rectangleCanvas.drawColor(Color.WHITE)
-
         if (rect.size != 0) {
             var index = 0
-            rect.forEach {
-                rectangleCanvas.drawRect(it, paints[index])
+            rect.forEach { rect ->
+                paints[index]?.let { paint -> rectangleCanvas.drawRect(rect, paint) }
                 index++
             }
             strokeRect.forEach {
@@ -61,6 +60,14 @@ class RectangleDraw : View {
         stroke.color = Color.BLUE
         stroke.strokeWidth = 4F
         stroke.style = Paint.Style.STROKE
+    }
+
+    fun setPaints(paint: Paint) {
+        paints.add(paint)
+    }
+
+    fun setRects(_rect: Rect) {
+        rect.add(_rect)
     }
 
     fun findRectangle(pointF: PointF): Int {
@@ -82,76 +89,9 @@ class RectangleDraw : View {
     private fun Rect.checkContains(x: Int, y: Int) =
         this.right >= x && this.left <= x && this.top >= y && this.bottom <= y
 
-    fun getColor(index: Int) = rectangleColor[index]
-
-    fun drawRectangle(rectangle: Rectangle) {
-        setRect(rectangle)
-        setPaints(rectangle)
-        setColorList(rectangle.rectangleColor)
-        invalidate()
-    }
-
     fun changeAlpha(rectangle: Rectangle, index: Int) {
         paints[index].alpha = rectangle.getAlpha() * 25
-        invalidate()
     }
-
-    private fun setColorList(_rectangleColor: RectangleColor) =
-        rectangleColor.add(setColor(_rectangleColor))
-
-    private fun setPaints(_rectangle: Rectangle) {
-        val paint = Paint()
-
-        paint.color = Color.argb(
-            _rectangle.getAlpha() * 25,
-            _rectangle.rectangleColor.red,
-            _rectangle.rectangleColor.green,
-            _rectangle.rectangleColor.blue
-        )
-
-        paint.style = Paint.Style.FILL
-        paints.add(paint)
-    }
-
-    private fun setRect(rectangle: Rectangle) {
-        val point = getPoints(rectangle.rectanglePoint, rectangle.rectangleSize)
-        rect.add(Rect(point[0], point[1], point[2], point[3]))
-    }
-
-    private fun getPoints(
-        point: RectanglePoint,
-        size: RectangleSize
-    ): IntArray {
-        val start = getStart(point.x, size.width)
-        val end = getEnd(point.x, size.width)
-        val top = getTop(point.y, size.height)
-        val bottom = getBottom(point.y, size.height)
-        return intArrayOf(start, top, end, bottom)
-    }
-
-    private fun getStart(
-        x: Int,
-        width: Int
-    ) = x - (width / 2)
-
-    private fun getEnd(
-        x: Int,
-        width: Int
-    ) = x + (width / 2)
-
-    private fun getTop(
-        y: Int,
-        height: Int
-    ) = y + (height / 2)
-
-    private fun getBottom(
-        y: Int,
-        height: Int
-    ) = y - (height / 2)
-
-    private fun setColor(rectangleColor: RectangleColor) = rectangleColor.red.toString(16) +
-            rectangleColor.blue.toString(16) +
-            rectangleColor.green.toString(16)
 
 
 }

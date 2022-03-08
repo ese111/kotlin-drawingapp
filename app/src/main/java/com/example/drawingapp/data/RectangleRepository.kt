@@ -34,9 +34,9 @@ class RectangleRepository : Repository {
 
     override fun setPlane(rectangle: Rectangle) = plane.setPlane(rectangle)
 
-    override fun getPlane(index: Int) = plane.getPlane(index)
+    override fun getPlane(index: Int): Rectangle = plane.getPlane(index)
 
-    override fun getPlaneCount() = plane.getCount()
+    override fun getPlaneCount(): Int = plane.getCount()
 
     override fun setAlpha(index: Int, value: Int) {
         plane.setAlpha(index, value)

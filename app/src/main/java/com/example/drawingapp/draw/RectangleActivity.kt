@@ -1,16 +1,17 @@
 package com.example.drawingapp.draw
 
 import android.annotation.SuppressLint
-import android.graphics.PointF
+import android.graphics.*
 import android.os.Bundle
 import android.view.MotionEvent
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import com.example.drawingapp.Contract
 import com.example.drawingapp.R
-import com.example.drawingapp.data.Rectangle
-import com.example.drawingapp.data.RectangleRepository
+import com.example.drawingapp.data.*
 import com.example.drawingapp.util.showSnackBar
 import com.google.android.material.slider.Slider
 import com.orhanobut.logger.AndroidLogAdapter
@@ -23,6 +24,9 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
     private lateinit var draw: RectangleDraw
     private lateinit var slider: Slider
     private var choiceRect = -1
+    private val rect = ListLiveData<Rect>()
+    private val paints = ListLiveData<Paint>()
+    private val rectangleColor = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,9 +72,17 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
                 presenter.getDrawRectangle(choiceRect)
             }
         })
+        rect.observe(this) {
+            draw.invalidate()
+        }
+
+        if (choiceRect != -1) {
+            paints.observe(this) { draw.invalidate() }
+        }
     }
 
     override fun changeAlpha(rectangle: Rectangle, index: Int) {
+        paints.getList()?.get(index)?.alpha = rectangle.getAlpha() * 25
         draw.changeAlpha(rectangle, index)
     }
 
@@ -112,7 +124,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
     override fun setColorText(count: Int) = when (count != -1) {
         true -> {
             val color: Button = findViewById(R.id.tv_background_color)
-            color.text = "#${draw.getColor(count)}"
+            color.text = "#${rectangleColor[count]}"
         }
 
         false -> {
@@ -126,8 +138,69 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
     }
 
     override fun drawRectangle(rectangle: Rectangle) {
-        draw.drawRectangle(rectangle)
-        Logger.wtf(rectangle.toString())
+        setRect(rectangle)
+        setPaints(rectangle)
+        setColorList(rectangle.rectangleColor)
     }
+
+
+    private fun setColorList(_rectangleColor: RectangleColor) =
+        rectangleColor.add(setColor(_rectangleColor))
+
+    private fun setPaints(rectangle: Rectangle) {
+        val paint = Paint()
+
+        paint.color = Color.argb(
+            rectangle.getAlpha() * 25,
+            rectangle.rectangleColor.red,
+            rectangle.rectangleColor.green,
+            rectangle.rectangleColor.blue
+        )
+
+        paint.style = Paint.Style.FILL
+        paints.add(paint)
+        draw.setPaints(paint)
+    }
+
+    private fun setRect(rectangle: Rectangle) {
+        val point = getPoints(rectangle.rectanglePoint, rectangle.rectangleSize)
+        rect.add(Rect(point[0], point[1], point[2], point[3]))
+        draw.setRects(Rect(point[0], point[1], point[2], point[3]))
+    }
+
+    private fun getPoints(
+        point: RectanglePoint,
+        size: RectangleSize
+    ): IntArray {
+        val start = getStart(point.x, size.width)
+        val end = getEnd(point.x, size.width)
+        val top = getTop(point.y, size.height)
+        val bottom = getBottom(point.y, size.height)
+        return intArrayOf(start, top, end, bottom)
+    }
+
+    private fun getStart(
+        x: Int,
+        width: Int
+    ) = x - (width / 2)
+
+    private fun getEnd(
+        x: Int,
+        width: Int
+    ) = x + (width / 2)
+
+    private fun getTop(
+        y: Int,
+        height: Int
+    ) = y + (height / 2)
+
+    private fun getBottom(
+        y: Int,
+        height: Int
+    ) = y - (height / 2)
+
+    private fun setColor(rectangleColor: RectangleColor) = rectangleColor.red.toString(16) +
+            rectangleColor.blue.toString(16) +
+            rectangleColor.green.toString(16)
 
 }

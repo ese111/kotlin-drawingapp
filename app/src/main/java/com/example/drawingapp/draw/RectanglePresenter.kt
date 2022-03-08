@@ -1,13 +1,16 @@
 package com.example.drawingapp.draw
 
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Rect
 import com.example.drawingapp.Contract
 import com.example.drawingapp.data.Repository
-
 
 class RectanglePresenter(
     private val view: Contract.View,
     private val repository: Repository
 ) : Contract.Presenter {
+
 
     override fun getRectangleLog() = repository.getRectangleLog(getRectangle())
 

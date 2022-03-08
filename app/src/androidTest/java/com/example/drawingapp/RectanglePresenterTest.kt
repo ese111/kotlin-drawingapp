@@ -15,7 +15,7 @@ class RectanglePresenterTest {
     private lateinit var view: Contract.View
 
     @Mock
-    private lateinit var repository: Contract.Repository
+    private lateinit var repository: Repository
 
     private lateinit var presenter: RectanglePresenter
 
@@ -36,7 +36,7 @@ class RectanglePresenterTest {
         val rectangle = repository.getRectangle(repository.getInputFactory())
         `when`(repository.getPlaneCount()).thenReturn(1)
         `when`(repository.getPlane(0)).thenReturn(rectangle)
-        presenter.onClickDraw()
+        presenter.getDrawRectangle()
         verify(view).drawRectangle(rectangle)
     }
 
