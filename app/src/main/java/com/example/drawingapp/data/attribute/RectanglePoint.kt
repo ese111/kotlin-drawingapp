@@ -1,4 +1,4 @@
-package com.example.drawingapp.data
+package com.example.drawingapp.data.attribute
 
 class RectanglePoint(
     val x: Int,

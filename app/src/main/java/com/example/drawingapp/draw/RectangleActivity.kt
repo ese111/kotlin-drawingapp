@@ -2,16 +2,22 @@ package com.example.drawingapp.draw
 
 import android.annotation.SuppressLint
 import android.graphics.*
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.MotionEvent
 import android.widget.Button
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import com.example.drawingapp.Contract
 import com.example.drawingapp.R
-import com.example.drawingapp.data.*
+import com.example.drawingapp.data.RectangleRepository
+import com.example.drawingapp.data.Type
+import com.example.drawingapp.data.attribute.Picture
+import com.example.drawingapp.data.attribute.Rectangle
+import com.example.drawingapp.data.attribute.RectangleColor
 import com.example.drawingapp.util.showSnackBar
 import com.google.android.material.slider.Slider
 import com.orhanobut.logger.AndroidLogAdapter
@@ -26,8 +32,11 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
     private var choiceRect = -1
     private val rect = ListLiveData<Rect>()
     private val paints = ListLiveData<Paint>()
+    private val pictures = ListLiveData<Picture>()
     private val rectangleColor = mutableListOf<String>()
 
+    @SuppressLint("Range")
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -38,9 +47,15 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
 //        presenter.onClickLog()
 //        presenter.onClickLog()
 //        presenter.onClickLog()
+        val getContent = selectPicture()
         val drawButton: Button = findViewById(R.id.btn_make_rectangle)
-
+        val picButton: Button = findViewById(R.id.add_pic_btn)
+        picButton.text = "사진 추가"
         drawButton.text = "사각형"
+
+        picButton.setOnClickListener {
+            getContent.launch("image/*")
+        }
 
         drawButton.setOnClickListener() {
 //            presenter.onClickLog()
@@ -67,23 +82,40 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
                     return
                 }
                 var alpha = slider.value / 10
-
                 setAlpha(choiceRect, alpha.toInt())
                 presenter.getDrawRectangle(choiceRect)
             }
         })
+
         rect.observe(this) {
             draw.invalidate()
         }
 
         if (choiceRect != -1) {
-            paints.observe(this) { draw.invalidate() }
+            paints.observe(this) {
+                draw.invalidate()
+            }
+        }
+
+        pictures.observe(this) {
+            draw.invalidate()
         }
     }
 
-    override fun changeAlpha(rectangle: Rectangle, index: Int) {
-        paints.getList()?.get(index)?.alpha = rectangle.getAlpha() * 25
-        draw.changeAlpha(rectangle, index)
+    private fun selectPicture() = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, it))
+        } else {
+            MediaStore.Images.Media.getBitmap(contentResolver, it)
+        }
+        val scaleBitmap = Bitmap.createScaledBitmap(bitmap, 150, 120, true)
+        presenter.setPlane(scaleBitmap)
+        presenter.getDrawPicture()
+    }
+
+    override fun changeAlpha(type: Type, index: Int) {
+        draw.changeAlpha(type, index)
+        paints.getList()?.get(index)?.alpha = type.getAlpha() * 25
     }
 
     override fun setAlpha(index: Int, value: Int) {
@@ -138,14 +170,20 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
     }
 
     override fun drawRectangle(rectangle: Rectangle) {
-        setRect(rectangle)
+        rect.add(rectangle.rect)
+        draw.setDrawType(rectangle)
         setPaints(rectangle)
-        setColorList(rectangle.rectangleColor)
+        rectangleColor.add(setColor(rectangle.rectangleColor))
     }
 
+    override fun drawPicture(picture: Picture) {
+        pictures.add(picture)
+        rect.add(picture.rect)
+        draw.setDrawType(picture)
+        setPaints(picture)
+        rectangleColor.add("image")
 
-    private fun setColorList(_rectangleColor: RectangleColor) =
-        rectangleColor.add(setColor(_rectangleColor))
+    }
 
     private fun setPaints(rectangle: Rectangle) {
         val paint = Paint()
@@ -162,42 +200,14 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
         draw.setPaints(paint)
     }
 
-    private fun setRect(rectangle: Rectangle) {
-        val point = getPoints(rectangle.rectanglePoint, rectangle.rectangleSize)
-        rect.add(Rect(point[0], point[1], point[2], point[3]))
-        draw.setRects(Rect(point[0], point[1], point[2], point[3]))
+    private fun setPaints(picture: Picture) {
+        val paint = Paint()
+
+        paint.alpha = picture.getAlpha() * 25
+
+        paints.add(paint)
+        draw.setPaints(paint)
     }
-
-    private fun getPoints(
-        point: RectanglePoint,
-        size: RectangleSize
-    ): IntArray {
-        val start = getStart(point.x, size.width)
-        val end = getEnd(point.x, size.width)
-        val top = getTop(point.y, size.height)
-        val bottom = getBottom(point.y, size.height)
-        return intArrayOf(start, top, end, bottom)
-    }
-
-    private fun getStart(
-        x: Int,
-        width: Int
-    ) = x - (width / 2)
-
-    private fun getEnd(
-        x: Int,
-        width: Int
-    ) = x + (width / 2)
-
-    private fun getTop(
-        y: Int,
-        height: Int
-    ) = y + (height / 2)
-
-    private fun getBottom(
-        y: Int,
-        height: Int
-    ) = y - (height / 2)
 
     private fun setColor(rectangleColor: RectangleColor) = rectangleColor.red.toString(16) +
             rectangleColor.blue.toString(16) +

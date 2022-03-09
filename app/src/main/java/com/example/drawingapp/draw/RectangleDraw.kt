@@ -4,12 +4,9 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.example.drawingapp.data.Rectangle
-import com.example.drawingapp.data.RectangleColor
-import com.example.drawingapp.data.RectanglePoint
-import com.example.drawingapp.data.RectangleSize
+import com.example.drawingapp.data.Type
+import com.example.drawingapp.data.attribute.Picture
+import com.orhanobut.logger.Logger
 
 class RectangleDraw : View {
 
@@ -27,7 +24,11 @@ class RectangleDraw : View {
 
     private val paints = mutableListOf<Paint>()
 
-    private val rect = mutableListOf<Rect>()
+//    private val rect = mutableListOf<Rect>()
+//
+//    private val pic = mutableListOf<Picture>()
+
+    private val drawType = mutableListOf<Type>()
 
     private val strokeRect = mutableSetOf<Rect>()
 
@@ -41,11 +42,22 @@ class RectangleDraw : View {
         }
 
         rectangleCanvas.drawColor(Color.WHITE)
-        if (rect.size != 0) {
+
+        if (drawType.isNotEmpty()) {
             var index = 0
-            rect.forEach { rect ->
-                paints[index]?.let { paint -> rectangleCanvas.drawRect(rect, paint) }
-                index++
+            drawType.forEach { type ->
+                when(type.type == "RECTANGLE") {
+                    true -> {
+                        paints[index]?.let { paint -> rectangleCanvas.drawRect(type.rect, paint) }
+                        index++
+                    }
+
+                    false -> {
+                        type as Picture
+                        paints[index]?.let { paint -> rectangleCanvas.drawBitmap(type.bitmap, type.point.x, type.point.y, paint) }
+                    }
+                }
+
             }
             strokeRect.forEach {
                 rectangleCanvas.drawRect(it, stroke)
@@ -66,16 +78,18 @@ class RectangleDraw : View {
         paints.add(paint)
     }
 
-    fun setRects(_rect: Rect) {
-        rect.add(_rect)
+    fun setDrawType(type: Type) {
+        drawType.add(type)
     }
 
     fun findRectangle(pointF: PointF): Int {
         var count = 0
-        rect.forEach {
-            if (it.checkContains(pointF.x.toInt(), pointF.y.toInt())) {
-                strokeRect.add(it)
+        drawType.forEach {
+            Logger.i("1 left: ${it.rect.left} top: ${it.rect.top}  right: ${it.rect.right}  bottom:  ${it.rect.bottom} x: ${pointF.x} y: ${pointF.y} count: ${count}")
+            if (it.rect.checkContains(pointF.x.toInt(), pointF.y.toInt())) {
+                strokeRect.add(it.rect)
                 getClickRectangle = count
+                Logger.i("2 left: ${it.rect.left} top: ${it.rect.top}  right: ${it.rect.right}  bottom:  ${it.rect.bottom} x: ${pointF.x} y: ${pointF.y} count: ${count}")
                 return count
             }
             count++
@@ -89,9 +103,9 @@ class RectangleDraw : View {
     private fun Rect.checkContains(x: Int, y: Int) =
         this.right >= x && this.left <= x && this.top >= y && this.bottom <= y
 
-    fun changeAlpha(rectangle: Rectangle, index: Int) {
-        paints[index].alpha = rectangle.getAlpha() * 25
+    fun changeAlpha(type: Type, index: Int) {
+        paints[index].alpha = type.getAlpha() * 25
+        invalidate()
     }
-
 
 }
