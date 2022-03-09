@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import com.example.drawingapp.InputFactory
 import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle
-import com.example.drawingapp.data.input.PictureInput
+import com.example.drawingapp.data.input.InputType
 
 interface Repository {
 

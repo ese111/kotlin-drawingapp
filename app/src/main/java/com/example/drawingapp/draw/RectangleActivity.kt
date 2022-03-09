@@ -81,7 +81,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
                     slider.value = 1F
                     return
                 }
-                var alpha = slider.value / 10
+                val alpha = slider.value / 10
                 setAlpha(choiceRect, alpha.toInt())
                 presenter.getDrawRectangle(choiceRect)
             }
@@ -131,7 +131,13 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
                 onTouchRectangle(pointF)
             }
             MotionEvent.ACTION_MOVE -> {
-                onTouchRectangle(pointF)
+                val length = event.historySize
+
+                if (length != 0) {
+                    val x = event.getHistoricalX(0)
+                    val y = event.getHistoricalY(0) - 176
+                    dragViewFactory(x.toInt(), y.toInt())
+                }
             }
             else -> {
                 draw.performClick()
@@ -141,16 +147,48 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
         return true
     }
 
+    private fun dragViewFactory(x: Int, y: Int) = when (rectangleColor[choiceRect] == "image") {
+        true -> setRectXY(x, y)
+        else -> setPicture(x, y)
+    }
+
+    private fun setRectXY(x: Int, y: Int) {
+        val left = x - 75
+        val top = y - 60
+        val right = x + 75
+        val bottom = y + 60
+
+        rect.getList()?.get(choiceRect)?.left = left
+        rect.getList()?.get(choiceRect)?.top = top
+        rect.getList()?.get(choiceRect)?.right = right
+        rect.getList()?.get(choiceRect)?.bottom = bottom
+
+        draw.setRect(choiceRect, rect.getList()?.get(choiceRect)!!)
+    }
+
+    private fun setPicture(x: Int, y: Int) {
+        val right = x + 150
+        val bottom = y + 120
+
+        rect.getList()?.get(choiceRect)?.left = x
+        rect.getList()?.get(choiceRect)?.top = y
+        rect.getList()?.get(choiceRect)?.right = right
+        rect.getList()?.get(choiceRect)?.bottom = bottom
+
+        draw.setRect(choiceRect, rect.getList()?.get(choiceRect)!!)
+    }
+
     override fun onTouchRectangle(pointF: PointF) {
         val count = draw.findRectangle(pointF)
 
         if (count == -1) {
-            draw.strokeRectReset()
+            draw.setStrokeClean()
             return
         }
         choiceRect = draw.getClickRectangle()
         slider.value = presenter.getAlpha(choiceRect) * 10F
     }
+
 
     @SuppressLint("SetTextI18n")
     override fun setColorText(count: Int) = when (count != -1) {

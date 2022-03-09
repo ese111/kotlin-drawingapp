@@ -2,7 +2,7 @@ package com.example.drawingapp
 
 import android.graphics.Bitmap
 import android.graphics.PointF
-import com.example.drawingapp.data.InputType
+import com.example.drawingapp.data.input.InputType
 import com.example.drawingapp.data.Type
 import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle

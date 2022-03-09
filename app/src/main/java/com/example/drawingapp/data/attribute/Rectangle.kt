@@ -2,6 +2,7 @@ package com.example.drawingapp.data.attribute
 
 import android.graphics.Rect
 import com.example.drawingapp.data.Type
+import com.example.drawingapp.data.input.InputType
 
 class Rectangle(
     private val rectNumber: Int,
@@ -11,7 +12,7 @@ class Rectangle(
     val rectangleColor: RectangleColor,
     private var alpha: Int,
     override val rect: Rect,
-    override val type: String = "RECTANGLE"
+    override val type: InputType = InputType.RECTANGLE
     ) : Type  {
     override fun setAlpha(value: Int) {
         alpha = value

@@ -2,7 +2,7 @@ package com.example.drawingapp.draw
 
 import android.graphics.Bitmap
 import com.example.drawingapp.Contract
-import com.example.drawingapp.data.InputType
+import com.example.drawingapp.data.input.InputType
 import com.example.drawingapp.data.Repository
 import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle
@@ -12,11 +12,11 @@ class RectanglePresenter(
     private val repository: Repository
 ) : Contract.Presenter {
 
+    override fun onClickLog() = view.getDrawMessage(getRectangleLog())
+
     override fun getRectangleLog() = repository.getRectangleLog(getRectangle())
 
     override fun getInput(inputType: InputType) = repository.getInputFactory(inputType)
-
-    override fun onClickLog() = view.getDrawMessage(getRectangleLog())
 
     override fun getRectangle() = repository.getRectangle(getInput(InputType.RECTANGLE))
 

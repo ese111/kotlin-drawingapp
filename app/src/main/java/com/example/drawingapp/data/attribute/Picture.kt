@@ -5,6 +5,7 @@ import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.Rect
 import com.example.drawingapp.data.Type
+import com.example.drawingapp.data.input.InputType
 
 class Picture(
     private val number: Int,
@@ -13,7 +14,7 @@ class Picture(
     val point: PointF,
     private var alpha: Int,
     override val rect: Rect,
-    override val type: String = "PICTURE"
+    override val type: InputType = InputType.PICTURE
 ) : Type {
 
     override fun setAlpha(value: Int) {
