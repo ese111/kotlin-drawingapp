@@ -7,7 +7,7 @@ import android.graphics.Rect
 import com.example.drawingapp.data.Type
 import com.example.drawingapp.data.input.InputType
 
-class Picture(
+data class Picture(
     private val number: Int,
     private val id: String,
     val bitmap: Bitmap,

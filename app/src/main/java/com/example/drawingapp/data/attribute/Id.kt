@@ -1,7 +1,7 @@
 package com.example.drawingapp.data.attribute
 
 
-class RectangleId {
+class Id {
     private val idSet = mutableSetOf<String>()
 
     fun putId(id: String) = idSet.add(id)

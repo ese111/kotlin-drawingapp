@@ -13,6 +13,8 @@ class RectanglePresenter(
     private val repository: Repository
 ) : Contract.Presenter {
 
+    override val plane = repository.plane
+
     override fun onClickLog() = view.getDrawMessage(getRectangleLog())
 
     override fun getRectangleLog() = repository.getRectangleLog(getRectangle())
@@ -38,23 +40,13 @@ class RectanglePresenter(
     override fun getAlpha(index: Int) = repository.getAlpha(index)
 
     override fun getDrawPicture() {
-        val picture = repository.getPlane(repository.getPlaneCount() - 1) as Picture
+        val picture = repository.getPlane(repository.getPlaneCount()?.minus(1) ?: throw IllegalArgumentException("stub!")) as Picture
         view.drawPicture(picture)
     }
 
-    override fun getDrawPicture(index: Int) {
-        val picture = repository.getPlane(index)
-        view.changeAlpha(picture, index)
-    }
-
     override fun getDrawRectangle() {
-        val rectangle = repository.getPlane(repository.getPlaneCount() - 1) as Rectangle
+        val rectangle = repository.getPlane(repository.getPlaneCount()?.minus(1) ?: throw IllegalArgumentException("stub!")) as Rectangle
         view.drawRectangle(rectangle)
-    }
-
-    override fun getDrawRectangle(index: Int) {
-        val rectangle = repository.getPlane(index)
-        view.changeAlpha(rectangle, index)
     }
 
 }

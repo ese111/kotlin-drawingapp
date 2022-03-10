@@ -67,13 +67,11 @@ class RectangleDraw : View {
             drawType[index].rect.top = _rect.top
             drawType[index].rect.right = _rect.right
             drawType[index].rect.bottom = _rect.bottom
-            invalidate()
         }
         InputType.PICTURE -> {
             val pic = drawType[index] as Picture
             pic.point.x = _rect.left.toFloat()
             pic.point.y = _rect.bottom.toFloat()
-            invalidate()
         }
     }
 
@@ -119,8 +117,8 @@ class RectangleDraw : View {
     private fun Rect.checkContains(x: Int, y: Int) =
         this.right >= x && this.left <= x && this.top >= y && this.bottom <= y
 
-    fun changeAlpha(type: Type, index: Int) {
-        paints[index].alpha = type.getAlpha() * 25
+    fun changeAlpha(index: Int, alpha: Int) {
+        paints[index].alpha = alpha * 25
         invalidate()
     }
 

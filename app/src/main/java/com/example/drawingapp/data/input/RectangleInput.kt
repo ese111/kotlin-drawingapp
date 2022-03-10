@@ -3,7 +3,7 @@ package com.example.drawingapp.data.input
 import android.graphics.Point
 import android.graphics.Rect
 import com.example.drawingapp.InputFactory
-import com.example.drawingapp.data.attribute.RectangleSize
+import com.example.drawingapp.data.attribute.Size
 import com.example.drawingapp.util.generateRandom
 import kotlin.random.Random
 
@@ -19,13 +19,13 @@ class RectangleInput(
 ) : InputFactory {
 
     override fun getRect(): Rect {
-        val point = getPoints(Point(pointX, pointY), RectangleSize())
+        val point = getPoints(Point(pointX, pointY), Size())
         return Rect(point[0], point[1], point[2], point[3])
     }
 
     private fun getPoints(
         point: Point,
-        size: RectangleSize
+        size: Size
     ): IntArray {
         val start = getStart(point.x, size.width)
         val end = getEnd(point.x, size.width)

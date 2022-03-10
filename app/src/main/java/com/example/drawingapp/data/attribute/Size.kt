@@ -1,6 +1,6 @@
 package com.example.drawingapp.data.attribute
 
-class RectangleSize(
+data class Size(
     val width: Int = 150,
     val height: Int = 120
 )

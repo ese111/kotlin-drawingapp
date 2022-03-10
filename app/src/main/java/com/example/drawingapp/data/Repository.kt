@@ -8,6 +8,7 @@ import com.example.drawingapp.data.attribute.Rectangle
 import com.example.drawingapp.data.input.InputType
 
 interface Repository {
+    val plane: Plane
 
     fun getRectangle(inputFactory: InputFactory): Rectangle
 
@@ -15,13 +16,13 @@ interface Repository {
 
     fun setPlane(type: Type)
 
-    fun getPlane(index: Int): Type
+    fun getPlane(index: Int): Type?
 
-    fun getPlaneCount(): Int
+    fun getPlaneCount(): Int?
 
     fun setAlpha(index: Int, value: Int)
 
-    fun getAlpha(index: Int): Int
+    fun getAlpha(index: Int): Int?
 
     fun getPicture(inputFactory: InputFactory, bitmap: Bitmap): Picture
 

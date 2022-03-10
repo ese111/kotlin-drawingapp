@@ -14,10 +14,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.drawingapp.Contract
 import com.example.drawingapp.R
 import com.example.drawingapp.data.RectangleRepository
-import com.example.drawingapp.data.Type
 import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle
-import com.example.drawingapp.data.attribute.RectangleColor
 import com.example.drawingapp.util.showSnackBar
 import com.google.android.material.slider.Slider
 import com.orhanobut.logger.AndroidLogAdapter
@@ -30,9 +28,6 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
     private lateinit var draw: RectangleDraw
     private lateinit var slider: Slider
     private var choiceRect = -1
-    private val rect = ListLiveData<Rect>()
-    private val paints = ListLiveData<Paint>()
-    private val pictures = ListLiveData<Picture>()
     private val rectangleColor = mutableListOf<String>()
 
     @SuppressLint("Range")
@@ -82,22 +77,12 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
                     return
                 }
                 val alpha = slider.value / 10
+                changeAlpha(choiceRect, alpha.toInt())
                 setAlpha(choiceRect, alpha.toInt())
-                presenter.getDrawRectangle(choiceRect)
             }
         })
 
-        rect.observe(this) {
-            draw.invalidate()
-        }
-
-        if (choiceRect != -1) {
-            paints.observe(this) {
-                draw.invalidate()
-            }
-        }
-
-        pictures.observe(this) {
+        presenter.plane.list.observe(this) {
             draw.invalidate()
         }
     }
@@ -113,9 +98,8 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
         presenter.getDrawPicture()
     }
 
-    override fun changeAlpha(type: Type, index: Int) {
-        draw.changeAlpha(type, index)
-        paints.getList()?.get(index)?.alpha = type.getAlpha() * 25
+    override fun changeAlpha(index: Int, alpha: Int) {
+        draw.changeAlpha(index, alpha)
     }
 
     override fun setAlpha(index: Int, value: Int) {
@@ -125,8 +109,8 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val count = draw.getClickRectangle()
         setColorText(count)
-        val pointF = PointF(event!!.x, event!!.y - 176F)
-        when (event!!.action) {
+        val pointF = PointF(event!!.x, event.y - 176F)
+        when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 onTouchRectangle(pointF)
             }
@@ -158,38 +142,28 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
         val right = x + 75
         val bottom = y - 60
 
-        rect.getList()?.get(choiceRect)?.left = left
-        rect.getList()?.get(choiceRect)?.top = top
-        rect.getList()?.get(choiceRect)?.right = right
-        rect.getList()?.get(choiceRect)?.bottom = bottom
-
-        presenter.setPlaneXY(choiceRect, rect.getList()?.get(choiceRect))
-        draw.setRect(choiceRect, rect.getList()?.get(choiceRect)!!)
+        presenter.setPlaneXY(choiceRect, Rect(left, top, right, bottom))
+        draw.setRect(choiceRect, Rect(left, top, right, bottom))
     }
 
     private fun setPicture(x: Int, y: Int) {
         val right = x + 150
         val top = y + 120
 
-        rect.getList()?.get(choiceRect)?.left = x
-        rect.getList()?.get(choiceRect)?.top = top
-        rect.getList()?.get(choiceRect)?.right = right
-        rect.getList()?.get(choiceRect)?.bottom = y
-
-        presenter.setPlaneXY(choiceRect, rect.getList()?.get(choiceRect))
-        draw.setRect(choiceRect, rect.getList()?.get(choiceRect)!!)
+        presenter.setPlaneXY(choiceRect, Rect(x, top, right, y))
+        draw.setRect(choiceRect, Rect(x, top, right, y))
     }
 
     override fun onTouchRectangle(pointF: PointF) {
         val count = draw.findRectangle(pointF)
-        Logger.e("$count")
         if (count == -1) {
             draw.setStrokeClean()
             choiceRect = draw.getClickRectangle()
             return
         }
         choiceRect = draw.getClickRectangle()
-        slider.value = presenter.getAlpha(choiceRect) * 10F
+        slider.value =
+            presenter.getAlpha(choiceRect)?.times(10F) ?: throw IllegalArgumentException("stub!")
     }
 
 
@@ -211,15 +185,12 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
     }
 
     override fun drawRectangle(rectangle: Rectangle) {
-        rect.add(rectangle.rect)
         draw.setDrawType(rectangle)
         setPaints(rectangle)
-        rectangleColor.add(setColor(rectangle.rectangleColor))
+        rectangleColor.add(setColor(rectangle.color))
     }
 
     override fun drawPicture(picture: Picture) {
-        pictures.add(picture)
-        rect.add(picture.rect)
         draw.setDrawType(picture)
         setPaints(picture)
         rectangleColor.add("image")
@@ -231,13 +202,12 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
 
         paint.color = Color.argb(
             rectangle.getAlpha() * 25,
-            rectangle.rectangleColor.red,
-            rectangle.rectangleColor.green,
-            rectangle.rectangleColor.blue
+            rectangle.color.red,
+            rectangle.color.green,
+            rectangle.color.blue
         )
 
         paint.style = Paint.Style.FILL
-        paints.add(paint)
         draw.setPaints(paint)
     }
 
@@ -246,12 +216,12 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
 
         paint.alpha = picture.getAlpha() * 25
 
-        paints.add(paint)
         draw.setPaints(paint)
     }
 
-    private fun setColor(rectangleColor: RectangleColor) = rectangleColor.red.toString(16) +
-            rectangleColor.blue.toString(16) +
-            rectangleColor.green.toString(16)
+    private fun setColor(color: com.example.drawingapp.data.attribute.Color) =
+        color.red.toString(16) +
+                color.blue.toString(16) +
+                color.green.toString(16)
 
 }

@@ -3,6 +3,8 @@ package com.example.drawingapp
 import android.graphics.Bitmap
 import android.graphics.PointF
 import android.graphics.Rect
+import com.example.drawingapp.data.Plane
+import com.example.drawingapp.data.Repository
 import com.example.drawingapp.data.input.InputType
 import com.example.drawingapp.data.Type
 import com.example.drawingapp.data.attribute.Picture
@@ -22,19 +24,19 @@ interface Contract {
 
         fun onTouchRectangle(pointF: PointF)
 
-        fun changeAlpha(type: Type, index: Int)
-
         fun setAlpha(index: Int, value: Int)
+
+        fun changeAlpha(index: Int, alpha: Int)
     }
 
     interface Presenter {
+
+        val plane : Plane
 
         fun getRectangleLog(): String
 
         fun onClickLog()
 
-        fun getDrawRectangle(index: Int)
-        
         fun getRectangle(): Rectangle
 
         fun getPicture(bitmap: Bitmap): Picture
@@ -45,13 +47,11 @@ interface Contract {
 
         fun setPlane(bitmap: Bitmap)
 
-        fun getAlpha(index: Int): Int
+        fun getAlpha(index: Int): Int?
 
         fun getDrawRectangle()
 
         fun getDrawPicture()
-
-        fun getDrawPicture(index: Int)
 
         fun getInput(inputType: InputType): InputFactory
 
