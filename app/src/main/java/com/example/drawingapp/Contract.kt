@@ -31,7 +31,7 @@ interface Contract {
 
     interface Presenter {
 
-        val plane : Plane
+        fun plane() : Plane
 
         fun getRectangleLog(): String
 
@@ -49,13 +49,18 @@ interface Contract {
 
         fun getAlpha(index: Int): Int?
 
-        fun getDrawRectangle()
-
-        fun getDrawPicture()
-
         fun getInput(inputType: InputType): InputFactory
 
-        fun setPlaneXY(index : Int, get: Rect?)
+        fun setPlaneXY(typeList: List<Type>)
+
+        fun drawPicture()
+
+        fun drawRectangle()
+
+        fun resetClick()
+
+        fun setClick(index: Int)
+
     }
 
 }

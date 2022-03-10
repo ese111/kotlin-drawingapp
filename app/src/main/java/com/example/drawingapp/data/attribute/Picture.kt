@@ -11,17 +11,13 @@ data class Picture(
     private val number: Int,
     private val id: String,
     val bitmap: Bitmap,
-    val point: PointF,
-    private var alpha: Int,
+    override val point: Point,
+    override var alpha: Int,
+    override val size: Size,
     override val rect: Rect,
-    override val type: InputType = InputType.PICTURE
+    override val type: InputType = InputType.PICTURE,
+    override var click: Boolean = false
 ) : Type {
-
-    override fun setAlpha(value: Int) {
-        alpha = value
-    }
-
-    override fun getAlpha() = alpha
 
     override fun toString() =
         "Rect${number} (${id}), X:${rect.top},Y:${rect.bottom}, W${rect.right}, H${rect.left}, " +

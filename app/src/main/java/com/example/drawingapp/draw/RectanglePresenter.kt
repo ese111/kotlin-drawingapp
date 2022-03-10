@@ -5,6 +5,7 @@ import android.graphics.Rect
 import com.example.drawingapp.Contract
 import com.example.drawingapp.data.input.InputType
 import com.example.drawingapp.data.Repository
+import com.example.drawingapp.data.Type
 import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle
 
@@ -13,7 +14,7 @@ class RectanglePresenter(
     private val repository: Repository
 ) : Contract.Presenter {
 
-    override val plane = repository.plane
+    override fun plane() = repository.plane
 
     override fun onClickLog() = view.getDrawMessage(getRectangleLog())
 
@@ -21,13 +22,14 @@ class RectanglePresenter(
 
     override fun getInput(inputType: InputType) = repository.getInputFactory(inputType)
 
-    override fun setPlaneXY(index: Int, rect: Rect?) {
-        repository.setPlaneXY(index, rect)
+    override fun setPlaneXY(typeList: List<Type>) {
+        repository.setPlaneXY(typeList)
     }
 
     override fun getRectangle() = repository.getRectangle(getInput(InputType.RECTANGLE))
 
-    override fun getPicture(bitmap: Bitmap) = repository.getPicture(getInput(InputType.PICTURE),bitmap)
+    override fun getPicture(bitmap: Bitmap) =
+        repository.getPicture(getInput(InputType.PICTURE), bitmap)
 
     override fun setPlane() = repository.setPlane(getRectangle())
 
@@ -39,14 +41,26 @@ class RectanglePresenter(
 
     override fun getAlpha(index: Int) = repository.getAlpha(index)
 
-    override fun getDrawPicture() {
-        val picture = repository.getPlane(repository.getPlaneCount()?.minus(1) ?: throw IllegalArgumentException("stub!")) as Picture
+    override fun drawPicture() {
+        val picture = repository.getPlane(
+            repository.getPlaneCount()?.minus(1) ?: throw IllegalArgumentException("stub!")
+        ) as Picture
         view.drawPicture(picture)
     }
 
-    override fun getDrawRectangle() {
-        val rectangle = repository.getPlane(repository.getPlaneCount()?.minus(1) ?: throw IllegalArgumentException("stub!")) as Rectangle
+    override fun drawRectangle() {
+        val rectangle = repository.getPlane(
+            repository.getPlaneCount()?.minus(1) ?: throw IllegalArgumentException("stub!")
+        ) as Rectangle
         view.drawRectangle(rectangle)
+    }
+
+    override fun resetClick() {
+        repository.resetClick()
+    }
+
+    override fun setClick(index: Int) {
+        repository.setClick(index)
     }
 
 }

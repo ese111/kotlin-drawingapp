@@ -42,17 +42,29 @@ class RectangleDraw : View {
 
         if (drawType.isNotEmpty()) {
             for (i in 0 until drawType.size) {
-                when(drawType[i].type == InputType.RECTANGLE) {
+                when (drawType[i].type == InputType.RECTANGLE) {
                     true -> {
-                        paints[i]?.let { paint -> rectangleCanvas.drawRect(drawType[i].rect, paint) }
+                        paints[i]?.let { paint ->
+                            rectangleCanvas.drawRect(
+                                drawType[i].rect,
+                                paint
+                            )
+                        }
                     }
 
                     false -> {
                         val pic = drawType[i] as Picture
-                        paints[i]?.let { paint -> rectangleCanvas.drawBitmap(pic.bitmap, pic.point.x, pic.point.y, paint) }
+                        paints[i]?.let { paint ->
+                            rectangleCanvas.drawBitmap(
+                                pic.bitmap,
+                                pic.point.x.toFloat(),
+                                pic.point.y.toFloat(),
+                                paint
+                            )
+                        }
                     }
                 }
-                if(isClick[i]) {
+                if (isClick[i]) {
                     rectangleCanvas.drawRect(drawType[i].rect, stroke)
                 }
             }
@@ -61,18 +73,45 @@ class RectangleDraw : View {
 
     fun getClickRectangle() = getClickRectangle
 
-    fun setRect(index: Int, _rect: Rect) = when(drawType[index].type) {
-        InputType.RECTANGLE -> {
-            drawType[index].rect.left = _rect.left
-            drawType[index].rect.top = _rect.top
-            drawType[index].rect.right = _rect.right
-            drawType[index].rect.bottom = _rect.bottom
+    fun setXY(x: Int, y: Int): List<Type> {
+        var index = 0
+        val setTypeList = mutableListOf<Type>()
+        drawType.forEach {
+            when (it.type) {
+                InputType.RECTANGLE -> {
+                    setTypeList.add(setRectXY(index, x, y))
+                }
+                InputType.PICTURE -> {
+                    setTypeList.add(setPicXY(index, x, y))
+                }
+            }
+            index++
         }
-        InputType.PICTURE -> {
-            val pic = drawType[index] as Picture
-            pic.point.x = _rect.left.toFloat()
-            pic.point.y = _rect.bottom.toFloat()
+        return setTypeList
+    }
+
+    private fun setRectXY(index: Int, x: Int, y: Int): Type {
+        if (isClick[index]) {
+            val resultX = (drawType[index].rect.left + (drawType[index].size.width / 2)) + x
+            val resultY = (drawType[index].rect.top - (drawType[index].size.height / 2)) + y
+            drawType[index].rect.left = resultX - (drawType[index].size.width / 2)
+            drawType[index].rect.top = resultY + (drawType[index].size.height / 2)
+            drawType[index].rect.right = resultX + (drawType[index].size.width / 2)
+            drawType[index].rect.bottom = resultY - (drawType[index].size.height / 2)
         }
+        return drawType[index]
+    }
+
+    private fun setPicXY(index: Int, x: Int, y: Int): Type {
+        if (isClick[index]) {
+            drawType[index].point.x += x
+            drawType[index].point.y += y
+            drawType[index].rect.left = drawType[index].point.x
+            drawType[index].rect.top = drawType[index].point.y + 120
+            drawType[index].rect.right = drawType[index].point.x + 150
+            drawType[index].rect.bottom = drawType[index].point.y
+        }
+        return drawType[index]
     }
 
     fun setStrokeClean() {
@@ -100,12 +139,10 @@ class RectangleDraw : View {
     fun findRectangle(pointF: PointF): Int {
         var count = 0
         drawType.forEach {
-            Logger.i("${it.rect.right}, ${it.rect.left}, ${it.rect.top}, ${it.rect.bottom}, ${pointF.x}, ${pointF.y}")
-            Logger.wtf("${it.rect.checkContains(pointF.x.toInt(), pointF.y.toInt())}")
-
             if (it.rect.checkContains(pointF.x.toInt(), pointF.y.toInt())) {
                 isClick[count] = true
                 getClickRectangle = count
+                Logger.wtf("원 ${pointF.x}, ${pointF.y}: ${it.rect.left}, ${it.rect.top}, ${it.rect.right}, ${it.rect.bottom}")
                 return count
             }
             count++

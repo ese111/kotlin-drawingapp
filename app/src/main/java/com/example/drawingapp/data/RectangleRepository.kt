@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.Rect
+import androidx.core.graphics.toPoint
 import com.example.drawingapp.InputFactory
 import com.example.drawingapp.data.attribute.*
 import com.example.drawingapp.data.input.InputType
@@ -30,9 +31,16 @@ class RectangleRepository : Repository {
         InputType.RECTANGLE -> RectangleInput(count)
         InputType.PICTURE -> PictureInput(count)
     }
+    override fun setPlaneXY(typeList: List<Type>) {
+        plane.setXY(typeList)
+    }
 
-    override fun setPlaneXY(index: Int, rect: Rect?) {
-        plane.setXY(index, rect)
+    override fun resetClick() {
+        plane.resetClick()
+    }
+
+    override fun setClick(index: Int) {
+        plane.list.getList()?.get(index)?.click = true
     }
 
     override fun getRectangle(inputFactory: InputFactory): Rectangle {
@@ -44,7 +52,7 @@ class RectangleRepository : Repository {
         val color = Color(inputFactory.colorR, inputFactory.colorG, inputFactory.colorB)
         val alpha = inputFactory.alpha
         val rect = inputFactory.getRect()
-        return Rectangle(inputFactory.count, id, point, size, color, alpha, rect)
+        return Rectangle(inputFactory.count, id, point, color, alpha,  size, rect)
     }
 
     override fun getPicture(inputFactory: InputFactory, bitmap: Bitmap): Picture {
@@ -53,8 +61,9 @@ class RectangleRepository : Repository {
         val id = id.getId()
         val point = PointF(inputFactory.pointX.toFloat(), inputFactory.pointY.toFloat())
         val rect = inputFactory.getRect()
+        val size = Size()
         val alpha = inputFactory.alpha
-        return Picture(inputFactory.count, id, bitmap, point, alpha, rect)
+        return Picture(inputFactory.count, id, bitmap, point.toPoint(), alpha,  size, rect)
     }
 
     override fun getRectangleLog(type: Type) = type.toString()
@@ -69,6 +78,6 @@ class RectangleRepository : Repository {
         plane.setAlpha(index, value)
     }
 
-    override fun getAlpha(index: Int) = getPlane(index)?.getAlpha()
+    override fun getAlpha(index: Int) = getPlane(index)?.alpha
 }
 

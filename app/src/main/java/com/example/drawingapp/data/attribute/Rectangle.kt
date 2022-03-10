@@ -9,17 +9,15 @@ class Rectangle(
     private val rectNumber: Int,
     private val rectangleId: String,
     private val rectanglePoint: Point,
-    private val size: Size,
     val color: Color,
-    private var alpha: Int,
+    override var alpha: Int,
+    override val size: Size,
     override val rect: Rect,
-    override val type: InputType = InputType.RECTANGLE
-    ) : Type  {
-    override fun setAlpha(value: Int) {
-        alpha = value
-    }
+    override val type: InputType = InputType.RECTANGLE,
+    override var click: Boolean = false,
+    override val point: Point = Point(rect.left, rect.bottom)
+) : Type  {
 
-    override fun getAlpha() = alpha
 
     override fun toString() =
         "Rect${rectNumber} (${rectangleId}), X:${rectanglePoint.x},Y:${rectanglePoint.y}, W${size.width}, H${size.height}, " +

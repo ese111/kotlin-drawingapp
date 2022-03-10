@@ -28,5 +28,9 @@ interface Repository {
 
     fun getInputFactory(type: InputType): InputFactory
 
-    fun setPlaneXY(index: Int, rect: Rect?)
+    fun setPlaneXY(typeList: List<Type>)
+
+    fun resetClick()
+
+    fun setClick(index: Int)
 }

@@ -2,6 +2,7 @@ package com.example.drawingapp.data.input
 
 import android.graphics.Rect
 import com.example.drawingapp.InputFactory
+import com.example.drawingapp.data.attribute.Size
 import com.example.drawingapp.util.generateRandom
 import kotlin.random.Random
 
@@ -17,7 +18,7 @@ class PictureInput(
 ) : InputFactory {
 
     override fun getRect(): Rect {
-        return Rect(pointX, pointY + 120, pointX + 150, pointY)
+        return Rect(pointX, pointY + Size().height, pointX + Size().width, pointY)
     }
 
 }

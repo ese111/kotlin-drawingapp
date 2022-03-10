@@ -27,7 +27,6 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
     private lateinit var presenter: Contract.Presenter
     private lateinit var draw: RectangleDraw
     private lateinit var slider: Slider
-    private var choiceRect = -1
     private val rectangleColor = mutableListOf<String>()
 
     @SuppressLint("Range")
@@ -55,7 +54,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
         drawButton.setOnClickListener() {
 //            presenter.onClickLog()
             presenter.setPlane()
-            presenter.getDrawRectangle()
+            presenter.drawRectangle()
         }
 
         slider = findViewById(R.id.slider_invisible)
@@ -71,18 +70,18 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
                 if (slider.value < 10F) {
                     slider.value = 10F
                 }
-                if (choiceRect == -1) {
+                if (draw.getClickRectangle() == -1) {
                     findViewById<ConstraintLayout>(R.id.container).showSnackBar("선택된 사각형이 없습니다.")
                     slider.value = 1F
                     return
                 }
                 val alpha = slider.value / 10
-                changeAlpha(choiceRect, alpha.toInt())
-                setAlpha(choiceRect, alpha.toInt())
+                changeAlpha(draw.getClickRectangle(), alpha.toInt())
+                setAlpha(draw.getClickRectangle(), alpha.toInt())
             }
         })
-
-        presenter.plane.list.observe(this) {
+        val plane = presenter.plane()
+        plane.list.observe(this) {
             draw.invalidate()
         }
     }
@@ -95,7 +94,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
         }
         val scaleBitmap = Bitmap.createScaledBitmap(bitmap, 150, 120, true)
         presenter.setPlane(scaleBitmap)
-        presenter.getDrawPicture()
+        presenter.drawPicture()
     }
 
     override fun changeAlpha(index: Int, alpha: Int) {
@@ -117,13 +116,14 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
             MotionEvent.ACTION_MOVE -> {
                 val length = event.historySize
 
-                if (length != 0 && choiceRect != -1) {
-                    val x = event.getHistoricalX(0)
-                    val y = event.getHistoricalY(0) - 176
+                if (length != 0 && draw.getClickRectangle() != -1) {
+
+                    val x = pointF.x - event.getHistoricalX(0)
+                    val y = pointF.y - (event.getHistoricalY(0) - 176)
                     dragViewFactory(x.toInt(), y.toInt())
                 }
             }
-            else -> {
+            MotionEvent.ACTION_UP -> {
                 draw.performClick()
             }
         }
@@ -131,39 +131,30 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
         return true
     }
 
-    private fun dragViewFactory(x: Int, y: Int) = when (rectangleColor[choiceRect] == "image") {
-        true -> setRectXY(x, y)
-        else -> setPicture(x, y)
+    private fun dragViewFactory(x: Int, y: Int) = when (rectangleColor[draw.getClickRectangle()] == "image") {
+        true -> setPicture(x, y)
+        else -> setRectXY(x, y)
     }
 
     private fun setRectXY(x: Int, y: Int) {
-        val left = x - 75
-        val top = y + 60
-        val right = x + 75
-        val bottom = y - 60
-
-        presenter.setPlaneXY(choiceRect, Rect(left, top, right, bottom))
-        draw.setRect(choiceRect, Rect(left, top, right, bottom))
+        val typeList = draw.setXY(x, y)
+        presenter.setPlaneXY(typeList)
     }
 
     private fun setPicture(x: Int, y: Int) {
-        val right = x + 150
-        val top = y + 120
-
-        presenter.setPlaneXY(choiceRect, Rect(x, top, right, y))
-        draw.setRect(choiceRect, Rect(x, top, right, y))
+        draw.setXY(x, y)
     }
 
     override fun onTouchRectangle(pointF: PointF) {
         val count = draw.findRectangle(pointF)
         if (count == -1) {
             draw.setStrokeClean()
-            choiceRect = draw.getClickRectangle()
+            presenter.resetClick()
             return
         }
-        choiceRect = draw.getClickRectangle()
+        presenter.setClick(draw.getClickRectangle())
         slider.value =
-            presenter.getAlpha(choiceRect)?.times(10F) ?: throw IllegalArgumentException("stub!")
+            presenter.getAlpha(draw.getClickRectangle())?.times(10F) ?: throw IllegalArgumentException("stub!")
     }
 
 
@@ -201,7 +192,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
         val paint = Paint()
 
         paint.color = Color.argb(
-            rectangle.getAlpha() * 25,
+            rectangle.alpha * 25,
             rectangle.color.red,
             rectangle.color.green,
             rectangle.color.blue
@@ -214,7 +205,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
     private fun setPaints(picture: Picture) {
         val paint = Paint()
 
-        paint.alpha = picture.getAlpha() * 25
+        paint.alpha = picture.alpha * 25
 
         draw.setPaints(paint)
     }
