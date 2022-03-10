@@ -72,7 +72,7 @@ class RectangleDraw : View {
         InputType.PICTURE -> {
             val pic = drawType[index] as Picture
             pic.point.x = _rect.left.toFloat()
-            pic.point.y = _rect.top.toFloat()
+            pic.point.y = _rect.bottom.toFloat()
             invalidate()
         }
     }
@@ -102,6 +102,9 @@ class RectangleDraw : View {
     fun findRectangle(pointF: PointF): Int {
         var count = 0
         drawType.forEach {
+            Logger.i("${it.rect.right}, ${it.rect.left}, ${it.rect.top}, ${it.rect.bottom}, ${pointF.x}, ${pointF.y}")
+            Logger.wtf("${it.rect.checkContains(pointF.x.toInt(), pointF.y.toInt())}")
+
             if (it.rect.checkContains(pointF.x.toInt(), pointF.y.toInt())) {
                 isClick[count] = true
                 getClickRectangle = count

@@ -2,6 +2,7 @@ package com.example.drawingapp.data
 
 import android.graphics.Bitmap
 import android.graphics.PointF
+import android.graphics.Rect
 import com.example.drawingapp.InputFactory
 import com.example.drawingapp.data.attribute.*
 import com.example.drawingapp.data.input.InputType
@@ -27,6 +28,10 @@ class RectangleRepository : Repository {
     override fun getInputFactory(type: InputType) = when (type) {
         InputType.RECTANGLE -> RectangleInput(count)
         InputType.PICTURE -> PictureInput(count)
+    }
+
+    override fun setPlaneXY(index: Int, rect: Rect?) {
+        plane.setXY(index, rect)
     }
 
     override fun getRectangle(inputFactory: InputFactory): Rectangle {

@@ -2,6 +2,7 @@ package com.example.drawingapp
 
 import android.graphics.Bitmap
 import android.graphics.PointF
+import android.graphics.Rect
 import com.example.drawingapp.data.input.InputType
 import com.example.drawingapp.data.Type
 import com.example.drawingapp.data.attribute.Picture
@@ -53,6 +54,8 @@ interface Contract {
         fun getDrawPicture(index: Int)
 
         fun getInput(inputType: InputType): InputFactory
+
+        fun setPlaneXY(index : Int, get: Rect?)
     }
 
 }

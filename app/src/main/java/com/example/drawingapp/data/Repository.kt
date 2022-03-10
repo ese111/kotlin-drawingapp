@@ -1,6 +1,7 @@
 package com.example.drawingapp.data
 
 import android.graphics.Bitmap
+import android.graphics.Rect
 import com.example.drawingapp.InputFactory
 import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle
@@ -25,4 +26,6 @@ interface Repository {
     fun getPicture(inputFactory: InputFactory, bitmap: Bitmap): Picture
 
     fun getInputFactory(type: InputType): InputFactory
+
+    fun setPlaneXY(index: Int, rect: Rect?)
 }

@@ -1,6 +1,7 @@
 package com.example.drawingapp.draw
 
 import android.graphics.Bitmap
+import android.graphics.Rect
 import com.example.drawingapp.Contract
 import com.example.drawingapp.data.input.InputType
 import com.example.drawingapp.data.Repository
@@ -17,6 +18,10 @@ class RectanglePresenter(
     override fun getRectangleLog() = repository.getRectangleLog(getRectangle())
 
     override fun getInput(inputType: InputType) = repository.getInputFactory(inputType)
+
+    override fun setPlaneXY(index: Int, rect: Rect?) {
+        repository.setPlaneXY(index, rect)
+    }
 
     override fun getRectangle() = repository.getRectangle(getInput(InputType.RECTANGLE))
 

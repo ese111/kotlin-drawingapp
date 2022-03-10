@@ -10,8 +10,8 @@ import kotlin.random.Random
 class RectangleInput(
     override val count: Int,
     override val randomId: String = generateRandom(),
-    override val pointX: Int = Random.nextInt(2300),
-    override val pointY: Int = Random.nextInt(1300),
+    override val pointX: Int = Random.nextInt(2000),
+    override val pointY: Int = Random.nextInt(1000),
     override val colorR: Int = Random.nextInt(255),
     override val colorG: Int = Random.nextInt(255),
     override val colorB: Int = Random.nextInt(255),

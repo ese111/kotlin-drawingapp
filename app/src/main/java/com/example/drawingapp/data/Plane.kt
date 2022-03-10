@@ -1,5 +1,7 @@
 package com.example.drawingapp.data
 
+import android.graphics.Rect
+
 class Plane {
 
     //    새로운 사각형을 생성하고 나면 Plane에 추가한다.
@@ -18,6 +20,15 @@ class Plane {
 
     fun setAlpha(index: Int, alpha: Int) {
         list[index].setAlpha(alpha)
+    }
+
+    fun setXY(index: Int, rect: Rect?) {
+        if (rect != null) {
+            list[index].rect.left = rect.left
+            list[index].rect.top = rect.top
+            list[index].rect.right = rect.right
+            list[index].rect.bottom = rect.bottom
+        }
     }
 
 }
