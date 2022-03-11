@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MotionEvent
 import android.widget.Button
+import android.widget.SeekBar
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -27,7 +28,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
 
     private lateinit var presenter: Contract.Presenter
     private lateinit var draw: RectangleDraw
-    private lateinit var slider: Slider
+    private lateinit var slider: SeekBar
     private val rectangleColor = mutableListOf<String>()
 
     @SuppressLint("Range")
@@ -60,27 +61,30 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
 
         slider = findViewById(R.id.slider_invisible)
 
-        slider.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
-            @SuppressLint("RestrictedApi")
-            override fun onStartTrackingTouch(slider: Slider) {
+        slider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
 
             }
 
-            @SuppressLint("RestrictedApi")
-            override fun onStopTrackingTouch(slider: Slider) {
-                if (slider.value < 10F) {
-                    slider.value = 10F
+            override fun onStartTrackingTouch(slider: SeekBar) {
+
+            }
+
+            override fun onStopTrackingTouch(slider: SeekBar) {
+                if (slider.progress < 10) {
+                    slider.progress = 10
                 }
                 if (draw.getClickRectangle() == -1) {
                     findViewById<ConstraintLayout>(R.id.container).showSnackBar("선택된 사각형이 없습니다.")
-                    slider.value = 1F
+                    slider.progress = 1
                     return
                 }
-                val alpha = slider.value / 10
+                val alpha = slider.progress / 10
                 changeAlpha(draw.getClickRectangle(), alpha.toInt())
                 setAlpha(draw.getClickRectangle(), alpha.toInt())
             }
         })
+
         val plane = presenter.plane()
         plane.list.observe(this) {
             draw.invalidate()
@@ -155,8 +159,8 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
             return
         }
         presenter.setClick(draw.getClickRectangle())
-        slider.value =
-            presenter.getAlpha(draw.getClickRectangle())?.times(10F) ?: throw IllegalArgumentException("stub!")
+        slider.progress =
+            presenter.getAlpha(draw.getClickRectangle())?.times(10) ?: throw IllegalArgumentException("stub!")
     }
 
 
