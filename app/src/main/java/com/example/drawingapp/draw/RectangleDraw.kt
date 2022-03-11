@@ -31,6 +31,8 @@ class RectangleDraw : View {
 
     private var getClickRectangle = -1
 
+    fun getDrawType() = drawType.toList()
+
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 

@@ -16,6 +16,7 @@ import com.example.drawingapp.R
 import com.example.drawingapp.data.RectangleRepository
 import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle
+import com.example.drawingapp.data.input.InputType
 import com.example.drawingapp.util.showSnackBar
 import com.google.android.material.slider.Slider
 import com.orhanobut.logger.AndroidLogAdapter
@@ -131,9 +132,9 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
         return true
     }
 
-    private fun dragViewFactory(x: Int, y: Int) = when (rectangleColor[draw.getClickRectangle()] == "image") {
-        true -> setPicture(x, y)
-        else -> setRectXY(x, y)
+    private fun dragViewFactory(x: Int, y: Int) = when (draw.getDrawType().get(draw.getClickRectangle()).type) {
+        InputType.PICTURE -> setPicture(x, y)
+        InputType.RECTANGLE -> setRectXY(x, y)
     }
 
     private fun setRectXY(x: Int, y: Int) {
@@ -142,7 +143,8 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
     }
 
     private fun setPicture(x: Int, y: Int) {
-        draw.setXY(x, y)
+        val typeList = draw.setXY(x, y)
+        presenter.setPlaneXY(typeList)
     }
 
     override fun onTouchRectangle(pointF: PointF) {
