@@ -13,12 +13,26 @@
         android:layout_height="wrap_content"
         android:background="@drawable/button_shape"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/include2"
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
-    <include layout="@layout/navbar"
+    <Button
+        android:id="@+id/add_pic_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pic_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_make_rectangle" />
+
+    <include
+        android:id="@+id/include2"
+        layout="@layout/navbar"
+        android:layout_width="100dp"
         android:layout_height="match_parent"
-        android:layout_width="150dp"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <com.example.drawingapp.draw.RectangleDraw
         android:id="@+id/draw_rectangle"

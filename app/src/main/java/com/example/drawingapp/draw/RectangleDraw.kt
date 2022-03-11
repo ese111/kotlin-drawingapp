@@ -3,17 +3,13 @@ package com.example.drawingapp.draw
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
-import com.example.drawingapp.Contract
-import com.example.drawingapp.Draw
-import com.example.drawingapp.data.Rectangle
-import com.example.drawingapp.data.RectangleColor
-import com.example.drawingapp.data.RectanglePoint
-import com.example.drawingapp.data.RectangleSize
-import java.util.logging.Logger
+import com.example.drawingapp.data.Type
+import com.example.drawingapp.data.attribute.Picture
+import com.example.drawingapp.data.input.InputType
+import com.orhanobut.logger.Logger
 
-class RectangleDraw : Draw, View {
+class RectangleDraw : View {
 
     constructor(context: Context?) : super(context) {
         initStroke()
@@ -29,13 +25,11 @@ class RectangleDraw : Draw, View {
 
     private val paints = mutableListOf<Paint>()
 
-    private val rect = mutableListOf<Rect>()
+    private val drawType = mutableListOf<Type>()
 
-    private val strokeRect = mutableSetOf<Rect>()
+    private val isClick = mutableListOf<Boolean>()
 
-    private var rectangleColor = mutableListOf<String>()
-
-    private var onClickRectangle = -1
+    private var getClickRectangle = -1
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
@@ -46,20 +40,85 @@ class RectangleDraw : Draw, View {
 
         rectangleCanvas.drawColor(Color.WHITE)
 
-        if (rect.size != 0) {
-            var index = 0
-            rect.forEach {
-                rectangleCanvas.drawRect(it, paints[index])
-                index++
-            }
-            strokeRect.forEach {
-                rectangleCanvas.drawRect(it, stroke)
+        if (drawType.isNotEmpty()) {
+            for (i in 0 until drawType.size) {
+                when (drawType[i].type == InputType.RECTANGLE) {
+                    true -> {
+                        paints[i]?.let { paint ->
+                            rectangleCanvas.drawRect(
+                                drawType[i].rect,
+                                paint
+                            )
+                        }
+                    }
+
+                    false -> {
+                        val pic = drawType[i] as Picture
+                        paints[i]?.let { paint ->
+                            rectangleCanvas.drawBitmap(
+                                pic.bitmap,
+                                pic.point.x.toFloat(),
+                                pic.point.y.toFloat(),
+                                paint
+                            )
+                        }
+                    }
+                }
+                if (isClick[i]) {
+                    rectangleCanvas.drawRect(drawType[i].rect, stroke)
+                }
             }
         }
-
     }
 
-    override fun onClickRectangleIndex() = onClickRectangle
+    fun getClickRectangle() = getClickRectangle
+
+    fun setXY(x: Int, y: Int): List<Type> {
+        var index = 0
+        val setTypeList = mutableListOf<Type>()
+        drawType.forEach {
+            when (it.type) {
+                InputType.RECTANGLE -> {
+                    setTypeList.add(setRectXY(index, x, y))
+                }
+                InputType.PICTURE -> {
+                    setTypeList.add(setPicXY(index, x, y))
+                }
+            }
+            index++
+        }
+        return setTypeList
+    }
+
+    private fun setRectXY(index: Int, x: Int, y: Int): Type {
+        if (isClick[index]) {
+            val resultX = (drawType[index].rect.left + (drawType[index].size.width / 2)) + x
+            val resultY = (drawType[index].rect.top - (drawType[index].size.height / 2)) + y
+            drawType[index].rect.left = resultX - (drawType[index].size.width / 2)
+            drawType[index].rect.top = resultY + (drawType[index].size.height / 2)
+            drawType[index].rect.right = resultX + (drawType[index].size.width / 2)
+            drawType[index].rect.bottom = resultY - (drawType[index].size.height / 2)
+        }
+        return drawType[index]
+    }
+
+    private fun setPicXY(index: Int, x: Int, y: Int): Type {
+        if (isClick[index]) {
+            drawType[index].point.x += x
+            drawType[index].point.y += y
+            drawType[index].rect.left = drawType[index].point.x
+            drawType[index].rect.top = drawType[index].point.y + 120
+            drawType[index].rect.right = drawType[index].point.x + 150
+            drawType[index].rect.bottom = drawType[index].point.y
+        }
+        return drawType[index]
+    }
+
+    fun setStrokeClean() {
+        for (i in 0 until isClick.size) {
+            isClick[i] = false
+        }
+    }
 
     private fun initStroke() {
         stroke = Paint()
@@ -68,81 +127,36 @@ class RectangleDraw : Draw, View {
         stroke.style = Paint.Style.STROKE
     }
 
-    override fun findRectangle(pointF: PointF): Int {
+    fun setPaints(paint: Paint) {
+        paints.add(paint)
+    }
+
+    fun setDrawType(type: Type) {
+        drawType.add(type)
+        isClick.add(false)
+    }
+
+    fun findRectangle(pointF: PointF): Int {
         var count = 0
-        rect.forEach {
-            if (it.checkContains(pointF.x.toInt(), pointF.y.toInt())) {
-                strokeRect.add(it)
+        drawType.forEach {
+            if (it.rect.checkContains(pointF.x.toInt(), pointF.y.toInt())) {
+                isClick[count] = true
+                getClickRectangle = count
+                Logger.wtf("원 ${pointF.x}, ${pointF.y}: ${it.rect.left}, ${it.rect.top}, ${it.rect.right}, ${it.rect.bottom}")
                 return count
             }
             count++
         }
-        return -1
+        getClickRectangle = -1
+        return getClickRectangle
     }
-
-    override fun strokeRectReset() = strokeRect.clear()
 
     private fun Rect.checkContains(x: Int, y: Int) =
         this.right >= x && this.left <= x && this.top >= y && this.bottom <= y
 
-    override fun drawRectangle(rectangle: Rectangle) {
-
-        val paint = Paint()
-
-        rectangleColor.add(setColor(rectangle.rectangleColor))
-
-        paint.color = Color.rgb(
-            rectangle.rectangleColor.red,
-            rectangle.rectangleColor.green,
-            rectangle.rectangleColor.blue
-        )
-
-        paint.style = Paint.Style.FILL
-
-        paints.add(paint)
-
-        val point = getPoints(rectangle.rectanglePoint, rectangle.rectangleSize)
-
-        rect.add(Rect(point[0], point[1], point[2], point[3]))
-
+    fun changeAlpha(index: Int, alpha: Int) {
+        paints[index].alpha = alpha * 25
         invalidate()
     }
-
-    override fun getColor(index: Int) = rectangleColor[index]
-
-    private fun getPoints(
-        point: RectanglePoint,
-        size: RectangleSize
-    ): IntArray {
-        val start = getStart(point.x, size.width)
-        val end = getEnd(point.x, size.width)
-        val top = getTop(point.y, size.height)
-        val bottom = getBottom(point.y, size.height)
-        return intArrayOf(start, top, end, bottom)
-    }
-
-    private fun getStart(
-        x: Int,
-        width: Int
-    ) = x - (width / 2)
-
-    private fun getEnd(
-        x: Int,
-        width: Int
-    ) = x + (width / 2)
-
-    private fun getTop(
-        y: Int,
-        height: Int
-    ) = y + (height / 2)
-
-    private fun getBottom(
-        y: Int,
-        height: Int
-    ) = y - (height / 2)
-
-    private fun setColor(rectangleColor: RectangleColor) = rectangleColor.red.toString(16) +
-            rectangleColor.blue.toString(16) +
-            rectangleColor.green.toString(16)
 
 }

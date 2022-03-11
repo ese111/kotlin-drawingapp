@@ -1,5 +1,7 @@
 package com.example.drawingapp
 
+import android.graphics.Rect
+
 interface InputFactory {
     val count: Int
     val randomId: String
@@ -9,4 +11,6 @@ interface InputFactory {
     val colorG: Int
     val colorB: Int
     val alpha: Int
+
+    fun getRect(): Rect
 }
