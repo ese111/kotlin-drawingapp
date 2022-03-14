@@ -23,11 +23,11 @@ class Rectangle(
         val id: String = rectangleId
         val rectPoint = Point(rectanglePoint.x, rectanglePoint.y)
         val rectColor = Color(this.color.red, this.color.green, this.color.blue)
-        var alpha: Int = this.alpha
+        val alpha: Int = this.alpha
         val size = Size(this.size.width, this.size.height)
         val rect = Rect(this.rect.left, this.rect.top, this.rect.right, this.rect.bottom)
         val type: InputType = InputType.RECTANGLE
-        var click = false
+        val click = false
         val point = Point(this.rect.left, this.rect.bottom)
         return Rectangle(num, id, rectPoint, rectColor, alpha, size, rect, type, click, point)
     }

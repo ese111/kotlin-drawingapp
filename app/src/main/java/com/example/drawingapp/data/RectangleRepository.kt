@@ -47,24 +47,29 @@ class RectangleRepository : Repository {
     override fun getRectangle(inputFactory: InputFactory): Rectangle {
         inputFactory as RectangleInput
         putId(inputFactory.randomId)
-        val id = id.getId()
-        val point = Point(inputFactory.pointX, inputFactory.pointY)
-        val size = Size()
-        val color = Color(inputFactory.colorR, inputFactory.colorG, inputFactory.colorB)
-        val alpha = inputFactory.alpha
-        val rect = inputFactory.getRect()
-        return Rectangle(inputFactory.count, id, point, color, alpha,  size, rect)
+        return Rectangle(
+            inputFactory.count,
+            id.getId(),
+            Point(inputFactory.pointX, inputFactory.pointY),
+            Color(inputFactory.colorR, inputFactory.colorG, inputFactory.colorB),
+            inputFactory.alpha,
+            Size(),
+            inputFactory.getRect()
+        )
     }
 
     override fun getPicture(inputFactory: InputFactory, bitmap: Bitmap): Picture {
         inputFactory as PictureInput
         putId(inputFactory.randomId)
-        val id = id.getId()
-        val point = PointF(inputFactory.pointX.toFloat(), inputFactory.pointY.toFloat())
-        val rect = inputFactory.getRect()
-        val size = Size()
-        val alpha = inputFactory.alpha
-        return Picture(inputFactory.count, id, bitmap, point.toPoint(), alpha,  size, rect)
+        return Picture(
+            inputFactory.count,
+            id.getId(),
+            bitmap,
+            Point(inputFactory.pointX, inputFactory.pointY),
+            inputFactory.alpha,
+            Size(),
+            inputFactory.getRect()
+        )
     }
 
     override fun getRectangleLog(type: Type) = type.toString()
