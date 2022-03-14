@@ -1,6 +1,5 @@
 package com.example.drawingapp.data
 
-import android.graphics.Rect
 import com.example.drawingapp.draw.ListLiveData
 
 class Plane {
@@ -25,32 +24,20 @@ class Plane {
 
     fun setXY(typeList: List<Type>) {
         for (i in 0 until list.getList()!!.size) {
-            if(list.getList()!![i].click) {
-                list.getList()?.get(i)?.point?.x = typeList[i].point.x
-                list.getList()?.get(i)?.point?.y = typeList[i].point.y
-                list.getList()?.get(i)?.rect?.left = typeList[i].rect.left
-                list.getList()?.get(i)?.rect?.top = typeList[i].rect.top
-                list.getList()?.get(i)?.rect?.right = typeList[i].rect.right
-                list.getList()?.get(i)?.rect?.bottom = typeList[i].rect.bottom
+            if (list.getList()!![i].click){
+                list.getList()!![i].point?.x = typeList[i].point.x
+                list.getList()!![i].point?.y = typeList[i].point.y
+                list.getList()!![i].rect?.left = typeList[i].rect.left
+                list.getList()!![i].rect?.top = typeList[i].rect.top
+                list.getList()!![i].rect?.right = typeList[i].rect.right
+                list.getList()!![i].rect?.bottom = typeList[i].rect.bottom
             }
         }
     }
-//    fun setXY(index: Int, rect: Rect?) {
-//        list.getList()?.filter { it.click }?.forEach {
-//
-//        }
-//        if (rect != null) {
-//            list.getList()?.get(index)?.rect?.left = rect.left
-//            list.getList()?.get(index)?.rect?.top = rect.top
-//            list.getList()?.get(index)?.rect?.right = rect.right
-//            list.getList()?.get(index)?.rect?.bottom = rect.bottom
-//        }
-//    }
 
     fun resetClick() {
         list.getList()?.forEach {
             it.click = false
         }
     }
-
 }

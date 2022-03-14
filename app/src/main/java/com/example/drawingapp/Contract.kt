@@ -14,7 +14,7 @@ interface Contract {
 
     interface View {
 
-        fun getDrawMessage(message: String)
+        fun drawMessage(message: String)
 
         fun drawRectangle(rectangle: Rectangle)
 

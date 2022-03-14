@@ -31,6 +31,7 @@ class RectangleRepository : Repository {
         InputType.RECTANGLE -> RectangleInput(count)
         InputType.PICTURE -> PictureInput(count)
     }
+
     override fun setPlaneXY(typeList: List<Type>) {
         plane.setXY(typeList)
     }
