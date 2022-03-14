@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MotionEvent
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.SeekBar
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -36,6 +38,22 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
 
     private lateinit var upPointF: PointF
 
+    private lateinit var positionXValue: TextView
+    private lateinit var positionXUp: ImageButton
+    private lateinit var positionXDown: ImageButton
+
+    private lateinit var positionYValue: TextView
+    private lateinit var positionYUp: ImageButton
+    private lateinit var positionYDown: ImageButton
+
+    private lateinit var widthValue: TextView
+    private lateinit var widthUp: ImageButton
+    private lateinit var widthDown: ImageButton
+
+    private lateinit var heightValue: TextView
+    private lateinit var heightUp: ImageButton
+    private lateinit var heightDown: ImageButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -49,6 +67,23 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
         val getContent = selectPicture()
         val drawButton: Button = findViewById(R.id.btn_make_rectangle)
         val picButton: Button = findViewById(R.id.add_pic_btn)
+
+        positionXValue = findViewById(R.id.x_position)
+        positionXUp = findViewById(R.id.x_position_up)
+        positionXDown = findViewById(R.id.x_position_down)
+
+        positionYValue = findViewById(R.id.y_position)
+        positionYUp = findViewById(R.id.y_position_up)
+        positionYDown = findViewById(R.id.x_position_down)
+
+        widthValue = findViewById(R.id.width_value)
+        widthUp = findViewById(R.id.width_up)
+        widthDown = findViewById(R.id.width_down)
+
+        heightValue = findViewById(R.id.height_value)
+        heightUp = findViewById(R.id.height_up)
+        heightDown = findViewById(R.id.height_down)
+
         picButton.text = "사진 추가"
         drawButton.text = "사각형"
 
@@ -121,11 +156,17 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
             draw.resetTemp()
             return
         }
-        setColorText(count)
+        setSideBar(count)
         presenter.setClick(count)
         slider.progress =
             presenter.getAlpha(draw.getClickRectangle())?.times(10)
                 ?: throw IllegalArgumentException("stub!")
+    }
+
+    override fun setSideBar(count: Int) {
+        setColorText(count)
+        draw.setPositionValue(count, positionXValue, positionYValue)
+        draw.setSizeValue(count, widthValue, heightValue)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {

@@ -5,6 +5,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.widget.TextView
 import com.example.drawingapp.data.Type
 import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle
@@ -282,4 +283,15 @@ class RectangleDraw : View {
         invalidate()
     }
 
+    fun setPositionValue(index: Int, XValue: TextView, YValue: TextView) {
+        val x = drawType[index].rect.left + (drawType[index].size.width / 2)
+        val y = drawType[index].rect.top - (drawType[index].size.height / 2)
+        XValue.text = x.toString()
+        YValue.text = y.toString()
+    }
+
+    fun setSizeValue(index: Int, width: TextView, height: TextView) {
+        width.text = drawType[index].size.width.toString()
+        height.text = drawType[index].size.height.toString()
+    }
 }
