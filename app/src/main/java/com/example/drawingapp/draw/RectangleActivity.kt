@@ -121,6 +121,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
             draw.resetTemp()
             return
         }
+        setColorText(count)
         presenter.setClick(count)
         slider.progress =
             presenter.getAlpha(draw.getClickRectangle())?.times(10)
