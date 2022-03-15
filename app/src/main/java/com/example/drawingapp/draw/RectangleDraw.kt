@@ -3,7 +3,6 @@ package com.example.drawingapp.draw
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import com.example.drawingapp.Contract
@@ -11,7 +10,6 @@ import com.example.drawingapp.data.Type
 import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle
 import com.example.drawingapp.data.input.InputType
-import com.orhanobut.logger.Logger
 
 class RectangleDraw : View {
 
@@ -72,7 +70,7 @@ class RectangleDraw : View {
             false -> setTempPic(type)
         }
 
-        val tempStroke = Paint().apply{
+        val tempStroke = Paint().apply {
             color = Color.BLUE
             strokeWidth = 4F
             style = Paint.Style.STROKE
@@ -297,8 +295,20 @@ class RectangleDraw : View {
         YValue.text = y.toString()
     }
 
+    fun setTempPositionValue(XValue: TextView, YValue: TextView) {
+        val x = tempSet.last().rect.left + (tempSet.last().size.width / 2)
+        val y = tempSet.last().rect.top - (tempSet.last().size.height / 2)
+        XValue.text = x.toString()
+        YValue.text = y.toString()
+    }
+
     fun setSizeValue(index: Int, width: TextView, height: TextView) {
         width.text = drawType[index].size.width.toString()
         height.text = drawType[index].size.height.toString()
+    }
+
+    fun setTempSizeValue(width: TextView, height: TextView) {
+        width.text = tempSet.last().size.width.toString()
+        height.text = tempSet.last().size.height.toString()
     }
 }

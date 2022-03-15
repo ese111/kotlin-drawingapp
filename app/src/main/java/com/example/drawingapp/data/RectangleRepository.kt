@@ -1,9 +1,9 @@
 package com.example.drawingapp.data
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import com.example.drawingapp.data.attribute.*
-import com.example.drawingapp.data.input.InputType
+import com.example.drawingapp.data.attribute.Id
+import com.example.drawingapp.data.attribute.Picture
+import com.example.drawingapp.data.attribute.Rectangle
 
 class RectangleRepository : Repository {
     private var count = 1
@@ -34,7 +34,8 @@ class RectangleRepository : Repository {
         return pic
     }
 
-    override fun getLastPlane() = plane.list.value?.last() ?: throw NullPointerException("nothing plane")
+    override fun getLastPlane() =
+        plane.list.value?.last() ?: throw NullPointerException("nothing plane")
 
     override fun setRectangleInPlane() {
         val rect = makeRectangle()

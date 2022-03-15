@@ -1,15 +1,11 @@
 package com.example.drawingapp.draw
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Rect
 import com.example.drawingapp.Contract
-import com.example.drawingapp.data.input.InputType
 import com.example.drawingapp.data.Repository
 import com.example.drawingapp.data.Type
 import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle
-import com.example.drawingapp.data.attribute.Size
 
 class RectanglePresenter(
     private val view: Contract.View,

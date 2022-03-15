@@ -15,10 +15,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.drawingapp.Contract
 import com.example.drawingapp.R
 import com.example.drawingapp.data.RectangleRepository
-import com.example.drawingapp.data.Type
 import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle
-import com.example.drawingapp.data.input.InputType
 import com.example.drawingapp.util.showSnackBar
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
@@ -156,11 +154,16 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
             draw.resetTemp()
             return
         }
-        setSideBar(count)
         presenter.setClick(count)
         slider.progress =
             presenter.getAlpha(draw.getClickRectangle())?.times(10)
                 ?: throw IllegalArgumentException("stub!")
+    }
+
+    private fun setTempSideBar(count: Int) {
+        setColorText(count)
+        draw.setTempPositionValue(positionXValue, positionYValue)
+        draw.setTempSizeValue(widthValue, heightValue)
     }
 
     override fun setSideBar(count: Int) {
@@ -175,6 +178,9 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
             MotionEvent.ACTION_DOWN -> {
                 downPointF = PointF(event.x, event.y - 176F)
                 onTouchRectangle(downPointF)
+                if(draw.getClickRectangle() != -1) {
+                    setSideBar(draw.getClickRectangle())
+                }
                 draw.invalidate()
             }
 
@@ -182,9 +188,10 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
                 val length = event.historySize
 
                 if (length != 0 && draw.getClickRectangle() != -1) {
-                    val x = (pointF.x - event.getHistoricalX(0)) * 2
-                    val y = (pointF.y - (event.getHistoricalY(0) - 176)) * 2
+                    val x = (pointF.x - event.getHistoricalX(0)) * 2.9
+                    val y = (pointF.y - (event.getHistoricalY(0) - 176)) * 2.9
                     draw.setTempXY(x.toInt(), y.toInt())
+                    setTempSideBar(draw.getClickRectangle())
                     draw.invalidate()
                 }
             }
