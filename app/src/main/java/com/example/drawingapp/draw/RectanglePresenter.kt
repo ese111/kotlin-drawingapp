@@ -16,7 +16,7 @@ class RectanglePresenter(
 
     override fun plane() = repository.plane
 
-    override fun onClickLog() = view.getDrawMessage(getRectangleLog())
+    override fun onClickLog() = view.drawMessage(getRectangleLog())
 
     override fun getRectangleLog() = repository.getRectangleLog(getRectangle())
 

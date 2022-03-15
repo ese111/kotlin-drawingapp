@@ -33,7 +33,7 @@
         android:text="#D6DFE9"
         android:textAlignment="center"
         android:textColor="#323333"
-        android:textSize="11sp"
+        android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_background" />
 
@@ -45,13 +45,13 @@
         android:layout_marginTop="10dp"
         android:text="투명도"
         android:textColor="#000000"
-        android:textSize="10sp"
+        android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_background_color" />
 
-    <com.google.android.material.slider.Slider
+    <SeekBar
         android:id="@+id/slider_invisible"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:valueFrom="1.0"
         android:valueTo="99.0"
@@ -61,5 +61,197 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_invisible" />
+
+    <TextView
+        android:id="@+id/position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="10dp"
+        android:text="위치"
+        android:textColor="#000000"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/slider_invisible"
+        />
+
+    <TextView
+        android:id="@+id/x_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/position"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:text=""
+        />
+
+    <TextView
+        android:id="@+id/x_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/position"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/x_position"
+        android:layout_marginTop="10dp"
+        android:textSize="12sp"
+        android:text="X"
+        />
+
+    <ImageButton
+        android:id="@+id/x_position_up"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/position"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/ic_baseline_expand_less_24"
+        />
+
+    <ImageButton
+        android:id="@+id/x_position_down"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/x_position_up"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/ic_baseline_expand_more_24"
+        />
+
+    <TextView
+        android:id="@+id/y_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/x_position"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        android:text=""
+        />
+
+    <TextView
+        android:id="@+id/y_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/x_position"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/y_position"
+        android:layout_marginTop="20dp"
+        android:textSize="12sp"
+        android:text="Y"
+        />
+
+    <ImageButton
+        android:id="@+id/y_position_up"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/x_position_down"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/ic_baseline_expand_less_24"
+        />
+
+    <ImageButton
+        android:id="@+id/y_position_down"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/y_position_up"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/ic_baseline_expand_more_24"
+        />
+
+    <TextView
+        android:id="@+id/size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="크기"
+        android:textSize="12sp"
+        app:layout_constraintTop_toBottomOf="@+id/y_label"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/width_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/width_value"
+        android:layout_marginTop="10dp"
+        android:text="W"
+        />
+
+    <TextView
+        android:id="@+id/width_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:textSize="14sp"
+        android:text=""
+        />
+
+    <ImageButton
+        android:id="@+id/width_up"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/size"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/ic_baseline_expand_less_24"
+        />
+
+    <ImageButton
+        android:id="@+id/width_down"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/width_up"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/ic_baseline_expand_more_24"
+        />
+
+    <TextView
+        android:id="@+id/height_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/width_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/height_value"
+        android:layout_marginTop="20dp"
+        android:textSize="14sp"
+        android:text="H"
+        />
+
+    <TextView
+        android:id="@+id/height_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/width_value"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        android:textSize="14sp"
+        android:text=""
+        />
+
+    <ImageButton
+        android:id="@+id/height_up"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/width_down"
+        android:background="@drawable/ic_baseline_expand_less_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <ImageButton
+        android:id="@+id/height_down"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/height_up"
+        android:background="@drawable/ic_baseline_expand_more_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

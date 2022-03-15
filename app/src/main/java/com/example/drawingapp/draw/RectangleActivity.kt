@@ -1,23 +1,25 @@
 package com.example.drawingapp.draw
 
-import android.annotation.SuppressLint
 import android.graphics.*
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MotionEvent
 import android.widget.Button
+import android.widget.ImageButton
+import android.widget.SeekBar
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.drawingapp.Contract
 import com.example.drawingapp.R
 import com.example.drawingapp.data.RectangleRepository
+import com.example.drawingapp.data.Type
 import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle
+import com.example.drawingapp.data.input.InputType
 import com.example.drawingapp.util.showSnackBar
-import com.google.android.material.slider.Slider
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 
@@ -25,12 +27,33 @@ import com.orhanobut.logger.Logger
 class RectangleActivity : AppCompatActivity(), Contract.View {
 
     private lateinit var presenter: Contract.Presenter
+
     private lateinit var draw: RectangleDraw
-    private lateinit var slider: Slider
+
+    private lateinit var slider: SeekBar
+
     private val rectangleColor = mutableListOf<String>()
 
-    @SuppressLint("Range")
-    @RequiresApi(Build.VERSION_CODES.M)
+    private lateinit var downPointF: PointF
+
+    private lateinit var upPointF: PointF
+
+    private lateinit var positionXValue: TextView
+    private lateinit var positionXUp: ImageButton
+    private lateinit var positionXDown: ImageButton
+
+    private lateinit var positionYValue: TextView
+    private lateinit var positionYUp: ImageButton
+    private lateinit var positionYDown: ImageButton
+
+    private lateinit var widthValue: TextView
+    private lateinit var widthUp: ImageButton
+    private lateinit var widthDown: ImageButton
+
+    private lateinit var heightValue: TextView
+    private lateinit var heightUp: ImageButton
+    private lateinit var heightDown: ImageButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -44,6 +67,23 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
         val getContent = selectPicture()
         val drawButton: Button = findViewById(R.id.btn_make_rectangle)
         val picButton: Button = findViewById(R.id.add_pic_btn)
+
+        positionXValue = findViewById(R.id.x_position)
+        positionXUp = findViewById(R.id.x_position_up)
+        positionXDown = findViewById(R.id.x_position_down)
+
+        positionYValue = findViewById(R.id.y_position)
+        positionYUp = findViewById(R.id.y_position_up)
+        positionYDown = findViewById(R.id.x_position_down)
+
+        widthValue = findViewById(R.id.width_value)
+        widthUp = findViewById(R.id.width_up)
+        widthDown = findViewById(R.id.width_down)
+
+        heightValue = findViewById(R.id.height_value)
+        heightUp = findViewById(R.id.height_up)
+        heightDown = findViewById(R.id.height_down)
+
         picButton.text = "사진 추가"
         drawButton.text = "사각형"
 
@@ -59,25 +99,27 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
 
         slider = findViewById(R.id.slider_invisible)
 
-        slider.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
-            @SuppressLint("RestrictedApi")
-            override fun onStartTrackingTouch(slider: Slider) {
+        slider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
 
             }
 
-            @SuppressLint("RestrictedApi")
-            override fun onStopTrackingTouch(slider: Slider) {
-                if (slider.value < 10F) {
-                    slider.value = 10F
+            override fun onStartTrackingTouch(slider: SeekBar) {
+
+            }
+
+            override fun onStopTrackingTouch(slider: SeekBar) {
+                if (slider.progress < 10) {
+                    slider.progress = 10
                 }
                 if (draw.getClickRectangle() == -1) {
                     findViewById<ConstraintLayout>(R.id.container).showSnackBar("선택된 사각형이 없습니다.")
-                    slider.value = 1F
+                    slider.progress = 1
                     return
                 }
-                val alpha = slider.value / 10
-                changeAlpha(draw.getClickRectangle(), alpha.toInt())
-                setAlpha(draw.getClickRectangle(), alpha.toInt())
+                val alpha = slider.progress / 10
+                changeAlpha(draw.getClickRectangle(), alpha)
+                setAlpha(draw.getClickRectangle(), alpha)
             }
         })
         val plane = presenter.plane()
@@ -105,73 +147,63 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
         presenter.setAlpha(index, value)
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        val count = draw.getClickRectangle()
-        setColorText(count)
-        val pointF = PointF(event!!.x, event.y - 176F)
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                onTouchRectangle(pointF)
-            }
-            MotionEvent.ACTION_MOVE -> {
-                val length = event.historySize
-
-                if (length != 0 && draw.getClickRectangle() != -1) {
-
-                    val x = pointF.x - event.getHistoricalX(0)
-                    val y = pointF.y - (event.getHistoricalY(0) - 176)
-                    dragViewFactory(x.toInt(), y.toInt())
-                }
-            }
-            MotionEvent.ACTION_UP -> {
-                draw.performClick()
-            }
-        }
-        draw.invalidate()
-        return true
-    }
-
-    private fun dragViewFactory(x: Int, y: Int) = when (rectangleColor[draw.getClickRectangle()] == "image") {
-        true -> setPicture(x, y)
-        else -> setRectXY(x, y)
-    }
-
-    private fun setRectXY(x: Int, y: Int) {
-        val typeList = draw.setXY(x, y)
-        presenter.setPlaneXY(typeList)
-    }
-
-    private fun setPicture(x: Int, y: Int) {
-        draw.setXY(x, y)
-    }
 
     override fun onTouchRectangle(pointF: PointF) {
         val count = draw.findRectangle(pointF)
         if (count == -1) {
             draw.setStrokeClean()
             presenter.resetClick()
+            draw.resetTemp()
             return
         }
-        presenter.setClick(draw.getClickRectangle())
-        slider.value =
-            presenter.getAlpha(draw.getClickRectangle())?.times(10F) ?: throw IllegalArgumentException("stub!")
+        setSideBar(count)
+        presenter.setClick(count)
+        slider.progress =
+            presenter.getAlpha(draw.getClickRectangle())?.times(10)
+                ?: throw IllegalArgumentException("stub!")
+    }
+
+    override fun setSideBar(count: Int) {
+        setColorText(count)
+        draw.setPositionValue(count, positionXValue, positionYValue)
+        draw.setSizeValue(count, widthValue, heightValue)
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        val pointF = PointF(event!!.x, event.y - 176F)
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                downPointF = PointF(event.x, event.y - 176F)
+                onTouchRectangle(downPointF)
+                draw.invalidate()
+            }
+
+            MotionEvent.ACTION_MOVE -> {
+                val length = event.historySize
+
+                if (length != 0 && draw.getClickRectangle() != -1) {
+                    val x = (pointF.x - event.getHistoricalX(0)) * 2
+                    val y = (pointF.y - (event.getHistoricalY(0) - 176)) * 2
+                    draw.setTempXY(x.toInt(), y.toInt())
+                    draw.invalidate()
+                }
+            }
+
+            MotionEvent.ACTION_UP -> {
+                upPointF = PointF(event.x, event.y - 176F)
+                val x = upPointF.x - downPointF.x
+                val y = upPointF.y - downPointF.y
+                val typeList = draw.setXY(x.toInt(), y.toInt())
+                presenter.setPlaneXY(typeList)
+                draw.resetTemp()
+                draw.invalidate()
+            }
+        }
+        return true
     }
 
 
-    @SuppressLint("SetTextI18n")
-    override fun setColorText(count: Int) = when (count != -1) {
-        true -> {
-            val color: Button = findViewById(R.id.tv_background_color)
-            color.text = "#${rectangleColor[count]}"
-        }
-
-        false -> {
-            val color: Button = findViewById(R.id.tv_background_color)
-            color.text = ""
-        }
-    }
-
-    override fun getDrawMessage(message: String) {
+    override fun drawMessage(message: String) {
         Logger.i(message)
     }
 
@@ -185,28 +217,24 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
         draw.setDrawType(picture)
         setPaints(picture)
         rectangleColor.add("image")
-
     }
 
     private fun setPaints(rectangle: Rectangle) {
-        val paint = Paint()
+        val paint = Paint().apply {
+            color = Color.argb(
+                rectangle.alpha * 25,
+                rectangle.color.red,
+                rectangle.color.green,
+                rectangle.color.blue
+            )
+            style = Paint.Style.FILL
+        }
 
-        paint.color = Color.argb(
-            rectangle.alpha * 25,
-            rectangle.color.red,
-            rectangle.color.green,
-            rectangle.color.blue
-        )
-
-        paint.style = Paint.Style.FILL
         draw.setPaints(paint)
     }
 
     private fun setPaints(picture: Picture) {
-        val paint = Paint()
-
-        paint.alpha = picture.alpha * 25
-
+        val paint = Paint().apply { alpha = picture.alpha * 25 }
         draw.setPaints(paint)
     }
 
@@ -215,4 +243,15 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
                 color.blue.toString(16) +
                 color.green.toString(16)
 
+    override fun setColorText(count: Int) = when (count != -1) {
+        true -> {
+            val color: Button = findViewById(R.id.tv_background_color)
+            color.text = "#${rectangleColor[count]}"
+        }
+
+        false -> {
+            val color: Button = findViewById(R.id.tv_background_color)
+            color.text = ""
+        }
+    }
 }
