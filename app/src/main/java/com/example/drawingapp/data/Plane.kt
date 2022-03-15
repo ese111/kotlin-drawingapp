@@ -1,5 +1,8 @@
 package com.example.drawingapp.data
 
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import com.example.drawingapp.draw.ListLiveData
 
 class Plane {
@@ -21,12 +24,12 @@ class Plane {
     fun setXY(typeList: List<Type>) {
         for (i in 0 until list.getList()!!.size) {
             if (list.getList()!![i].click){
-                list.getList()!![i].point?.x = typeList[i].point.x
-                list.getList()!![i].point?.y = typeList[i].point.y
-                list.getList()!![i].rect?.left = typeList[i].rect.left
-                list.getList()!![i].rect?.top = typeList[i].rect.top
-                list.getList()!![i].rect?.right = typeList[i].rect.right
-                list.getList()!![i].rect?.bottom = typeList[i].rect.bottom
+                list.getList()!![i].point.x = typeList[i].point.x
+                list.getList()!![i].point.y = typeList[i].point.y
+                list.getList()!![i].rect.left = typeList[i].rect.left
+                list.getList()!![i].rect.top = typeList[i].rect.top
+                list.getList()!![i].rect.right = typeList[i].rect.right
+                list.getList()!![i].rect.bottom = typeList[i].rect.bottom
             }
         }
     }
@@ -36,4 +39,5 @@ class Plane {
             it.click = false
         }
     }
+
 }

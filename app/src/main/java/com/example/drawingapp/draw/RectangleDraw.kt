@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
+import com.example.drawingapp.Contract
 import com.example.drawingapp.data.Type
 import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle
@@ -22,7 +23,7 @@ class RectangleDraw : View {
         initStroke()
     }
 
-    private lateinit var rectangleCanvas: Canvas
+    private lateinit var mCanvas: Canvas
 
     private lateinit var stroke: Paint
 
@@ -34,14 +35,20 @@ class RectangleDraw : View {
 
     private val tempSet = mutableSetOf<Type>()
 
+    lateinit var mPresenter: Contract.Presenter
+
+    fun initPresenter(presenter: Contract.Presenter) {
+        mPresenter = presenter
+    }
+
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
         if (canvas != null) {
-            rectangleCanvas = canvas
+            mCanvas = canvas
         }
 
-        rectangleCanvas.drawColor(Color.WHITE)
+        mCanvas.drawColor(Color.WHITE)
 
         if (drawType.isNotEmpty()) {
             startDraw()
@@ -72,7 +79,7 @@ class RectangleDraw : View {
             alpha = 5
         }
 
-        rectangleCanvas.drawRect(type.rect, tempStroke)
+        mCanvas.drawRect(type.rect, tempStroke)
     }
 
     private fun setTempPic(type: Type) {
@@ -82,7 +89,7 @@ class RectangleDraw : View {
             style = Paint.Style.FILL
         }
 
-        rectangleCanvas.drawBitmap(
+        mCanvas.drawBitmap(
             pic.bitmap,
             pic.point.x.toFloat(),
             pic.point.y.toFloat(),
@@ -102,7 +109,7 @@ class RectangleDraw : View {
             style = Paint.Style.FILL
         }
 
-        rectangleCanvas.drawRect(
+        mCanvas.drawRect(
             rect.rect,
             paint
         )
@@ -116,28 +123,28 @@ class RectangleDraw : View {
 
     private fun drawFactory(index: Int) {
         when (drawType[index].type == InputType.RECTANGLE) {
-            true -> setRect(index)
-            false -> setPic(index)
+            true -> drawRect(index)
+            false -> drawPic(index)
         }
 
         if (drawType[index].click) {
-            rectangleCanvas.drawRect(drawType[index].rect, stroke)
+            mCanvas.drawRect(drawType[index].rect, stroke)
         }
     }
 
-    private fun setRect(index: Int) {
+    private fun drawRect(index: Int) {
         paints[index]?.let { paint ->
-            rectangleCanvas.drawRect(
+            mCanvas.drawRect(
                 drawType[index].rect,
                 paint
             )
         }
     }
 
-    private fun setPic(index: Int) {
+    private fun drawPic(index: Int) {
         val pic = drawType[index] as Picture
         paints[index]?.let { paint ->
-            rectangleCanvas.drawBitmap(
+            mCanvas.drawBitmap(
                 pic.bitmap,
                 pic.point.x.toFloat(),
                 pic.point.y.toFloat(),

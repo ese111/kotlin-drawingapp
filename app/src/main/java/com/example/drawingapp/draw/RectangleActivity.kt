@@ -60,6 +60,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
         Logger.addLogAdapter(AndroidLogAdapter())
         draw = findViewById(R.id.draw_rectangle)
         presenter = RectanglePresenter(this, RectangleRepository())
+        draw.initPresenter(presenter)
 //        presenter.onClickLog()
 //        presenter.onClickLog()
 //        presenter.onClickLog()
@@ -93,7 +94,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
 
         drawButton.setOnClickListener() {
 //            presenter.onClickLog()
-            presenter.setPlane()
+            presenter.setRectangleInPlane()
             presenter.drawRectangle()
         }
 
@@ -135,7 +136,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
             MediaStore.Images.Media.getBitmap(contentResolver, it)
         }
         val scaleBitmap = Bitmap.createScaledBitmap(bitmap, 150, 120, true)
-        presenter.setPlane(scaleBitmap)
+        presenter.setPictureInPlane(scaleBitmap)
         presenter.drawPicture()
     }
 
@@ -146,7 +147,6 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
     override fun setAlpha(index: Int, value: Int) {
         presenter.setAlpha(index, value)
     }
-
 
     override fun onTouchRectangle(pointF: PointF) {
         val count = draw.findRectangle(pointF)

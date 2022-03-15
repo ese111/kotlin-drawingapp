@@ -1,9 +1,13 @@
 package com.example.drawingapp.data.attribute
 
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Point
 import android.graphics.Rect
 import com.example.drawingapp.data.Type
 import com.example.drawingapp.data.input.InputType
+import com.example.drawingapp.util.generateRandom
+import kotlin.random.Random
 
 class Rectangle(
     private val rectNumber: Int,
@@ -32,8 +36,37 @@ class Rectangle(
         return Rectangle(num, id, rectPoint, rectColor, alpha, size, rect, type, click, point)
     }
 
+
     override fun toString() =
         "Rect${rectNumber} (${rectangleId}), X:${rectanglePoint.x},Y:${rectanglePoint.y}, W${size.width}, H${size.height}, " +
                 "R:${color.red}, G:${color.green}, B:${color.blue}, Alpha: $alpha"
 
+    companion object Factory{
+        fun make(count: Int, id: Id) : Rectangle {
+            putId(id)
+            val point = Point(Random.nextInt(2000), Random.nextInt(1000))
+            return Rectangle(
+                count,
+                id.getId(),
+                point,
+                Color(Random.nextInt(255), Random.nextInt(255), Random.nextInt(255)),
+                Random.nextInt(10),
+                Size(),
+                getRect(point))	// companion object의 bar() 메서드를 통해 private 생성자 접근 가능
+        }
+
+        private fun putId(id: Id) {
+            while (true) {
+                val picId = id.makeRandomId(generateRandom())
+                if (id.checkId(picId)) {
+                    id.putId(picId)
+                    return
+                }
+            }
+        }
+
+        private fun getRect(point: Point): Rect {
+            return Rect(point.x, point.y + Size().height, point.x + Size().width, point.y)
+        }
+    }
 }

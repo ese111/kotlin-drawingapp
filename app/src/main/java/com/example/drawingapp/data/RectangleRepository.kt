@@ -1,36 +1,14 @@
 package com.example.drawingapp.data
 
 import android.graphics.Bitmap
-import android.graphics.Point
-import android.graphics.PointF
-import android.graphics.Rect
-import androidx.core.graphics.toPoint
-import com.example.drawingapp.InputFactory
+import android.graphics.Canvas
 import com.example.drawingapp.data.attribute.*
 import com.example.drawingapp.data.input.InputType
-import com.example.drawingapp.data.input.PictureInput
-import com.example.drawingapp.data.input.RectangleInput
 
 class RectangleRepository : Repository {
     private var count = 1
     private val id: Id = Id()
     override val plane = Plane()
-
-    private fun putId(randomId: String) {
-        while (true) {
-            val id = id.makeRandomId(randomId)
-            if (this.id.checkId(id)) {
-                this.id.putId(id)
-                count++
-                return
-            }
-        }
-    }
-
-    override fun getInputFactory(type: InputType) = when (type) {
-        InputType.RECTANGLE -> RectangleInput(count)
-        InputType.PICTURE -> PictureInput(count)
-    }
 
     override fun setPlaneXY(typeList: List<Type>) {
         plane.setXY(typeList)
@@ -44,37 +22,29 @@ class RectangleRepository : Repository {
         plane.list.getList()?.get(index)?.click = true
     }
 
-    override fun getRectangle(inputFactory: InputFactory): Rectangle {
-        inputFactory as RectangleInput
-        putId(inputFactory.randomId)
-        return Rectangle(
-            inputFactory.count,
-            id.getId(),
-            Point(inputFactory.pointX, inputFactory.pointY),
-            Color(inputFactory.colorR, inputFactory.colorG, inputFactory.colorB),
-            inputFactory.alpha,
-            Size(),
-            inputFactory.getRect()
-        )
+    private fun makeRectangle(): Rectangle {
+        val rect = Rectangle.make(count, id)
+        count++
+        return rect
     }
 
-    override fun getPicture(inputFactory: InputFactory, bitmap: Bitmap): Picture {
-        inputFactory as PictureInput
-        putId(inputFactory.randomId)
-        return Picture(
-            inputFactory.count,
-            id.getId(),
-            bitmap,
-            Point(inputFactory.pointX, inputFactory.pointY),
-            inputFactory.alpha,
-            Size(),
-            inputFactory.getRect()
-        )
+    private fun makePicture(bitmap: Bitmap): Picture {
+        val pic = Picture.make(count, id, bitmap)
+        count++
+        return pic
     }
 
-    override fun getRectangleLog(type: Type) = type.toString()
+    override fun getLastPlane() = plane.list.value?.last() ?: throw NullPointerException("nothing plane")
 
-    override fun setPlane(type: Type) = plane.setPlane(type)
+    override fun setRectangleInPlane() {
+        val rect = makeRectangle()
+        plane.setPlane(rect)
+    }
+
+    override fun setPictureInPlane(bitmap: Bitmap) {
+        val pic = makePicture(bitmap)
+        plane.setPlane(pic)
+    }
 
     override fun getPlane(index: Int): Type? = plane.getPlane(index)
 
@@ -85,5 +55,6 @@ class RectangleRepository : Repository {
     }
 
     override fun getAlpha(index: Int) = getPlane(index)?.alpha
+
 }
 
