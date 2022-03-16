@@ -29,7 +29,7 @@ interface Contract {
 
         fun changeAlpha(index: Int, alpha: Int)
 
-        fun setSideBar(count: Int)
+        fun setSideBar()
     }
 
     interface Presenter {

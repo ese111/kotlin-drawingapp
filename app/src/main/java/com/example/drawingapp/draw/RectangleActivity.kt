@@ -5,10 +5,12 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MotionEvent
+import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -20,11 +22,14 @@ import com.example.drawingapp.data.attribute.Rectangle
 import com.example.drawingapp.util.showSnackBar
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
+import kotlin.Exception
 
 
-class RectangleActivity : AppCompatActivity(), Contract.View {
+class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListener {
 
     private lateinit var presenter: Contract.Presenter
+
+    private lateinit var main: ConstraintLayout
 
     private lateinit var draw: RectangleDraw
 
@@ -35,6 +40,10 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
     private lateinit var downPointF: PointF
 
     private lateinit var upPointF: PointF
+
+    private lateinit var addRectButton: Button
+
+    private lateinit var addPictureButton: Button
 
     private lateinit var positionXValue: TextView
     private lateinit var positionXUp: ImageButton
@@ -52,49 +61,58 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
     private lateinit var heightUp: ImageButton
     private lateinit var heightDown: ImageButton
 
+    private lateinit var getContent: ActivityResultLauncher<String?>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         Logger.addLogAdapter(AndroidLogAdapter())
+
+        main = findViewById(R.id.container)
         draw = findViewById(R.id.draw_rectangle)
         presenter = RectanglePresenter(this, RectangleRepository())
-        draw.initPresenter(presenter)
+
+        draw.initView(main)
 //        presenter.onClickLog()
 //        presenter.onClickLog()
 //        presenter.onClickLog()
 //        presenter.onClickLog()
-        val getContent = selectPicture()
-        val drawButton: Button = findViewById(R.id.btn_make_rectangle)
-        val picButton: Button = findViewById(R.id.add_pic_btn)
+
+        getContent = selectPicture()
+
+        addRectButton = findViewById(R.id.btn_make_rectangle)
+        addPictureButton = findViewById(R.id.add_pic_btn)
+
+        addRectButton.setOnClickListener(this)
+        addPictureButton.setOnClickListener(this)
 
         positionXValue = findViewById(R.id.x_position)
         positionXUp = findViewById(R.id.x_position_up)
         positionXDown = findViewById(R.id.x_position_down)
 
+        positionXUp.setOnClickListener(this)
+        positionXDown.setOnClickListener(this)
+
         positionYValue = findViewById(R.id.y_position)
         positionYUp = findViewById(R.id.y_position_up)
-        positionYDown = findViewById(R.id.x_position_down)
+        positionYDown = findViewById(R.id.y_position_down)
+
+        positionYUp.setOnClickListener(this)
+        positionYDown.setOnClickListener(this)
 
         widthValue = findViewById(R.id.width_value)
         widthUp = findViewById(R.id.width_up)
         widthDown = findViewById(R.id.width_down)
 
+        widthUp.setOnClickListener(this)
+        widthDown.setOnClickListener(this)
+
         heightValue = findViewById(R.id.height_value)
         heightUp = findViewById(R.id.height_up)
         heightDown = findViewById(R.id.height_down)
 
-        picButton.text = "사진 추가"
-        drawButton.text = "사각형"
-
-        picButton.setOnClickListener {
-            getContent.launch("image/*")
-        }
-
-        drawButton.setOnClickListener() {
-//            presenter.onClickLog()
-            presenter.setRectangleInPlane()
-            presenter.drawRectangle()
-        }
+        heightUp.setOnClickListener(this)
+        heightDown.setOnClickListener(this)
 
         slider = findViewById(R.id.slider_invisible)
 
@@ -121,10 +139,143 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
                 setAlpha(draw.getClickRectangle(), alpha)
             }
         })
+
         val plane = presenter.plane()
         plane.list.observe(this) {
             draw.invalidate()
         }
+    }
+
+    override fun onClick(view: View?) = when (view?.id) {
+        R.id.btn_make_rectangle -> {
+//            presenter.onClickLog()
+            presenter.setRectangleInPlane()
+            presenter.drawRectangle()
+        }
+        R.id.add_pic_btn -> {
+            getContent.launch("image/*")
+        }
+        R.id.x_position_up -> {
+            try {
+                changeUpX(1, 0)
+            } catch (e: Exception) {
+                main.showSnackBar("좌표조정에 실패하였습니다.")
+            }
+        }
+        R.id.x_position_down -> {
+            try {
+                changeDownX(-1, 0)
+            } catch (e: Exception) {
+                main.showSnackBar("좌표조정에 실패하였습니다.")
+            }
+        }
+        R.id.y_position_up -> {
+            try {
+                changeUpY(0, -1)
+            } catch (e: Exception) {
+                main.showSnackBar("좌표조정에 실패하였습니다.")
+            }
+        }
+        R.id.y_position_down -> {
+            try {
+                changeDownY(0, 1)
+            } catch (e: Exception) {
+                main.showSnackBar("좌표조정에 실패하였습니다.")
+            }
+        }
+        R.id.width_up -> {
+            try {
+                changeUpWidth(1, 0)
+            } catch (e: Exception) {
+                main.showSnackBar("넓이조정에 실패하였습니다.")
+            }
+        }
+        R.id.width_down -> {
+            try {
+                changeDownWidth(-1, 0)
+            } catch (e: Exception) {
+                main.showSnackBar("넓이조정에 실패하였습니다.")
+            }
+        }
+        R.id.height_up -> {
+            try {
+                changeUpHeight(0, 1)
+            } catch (e: Exception) {
+                main.showSnackBar("높이조정에 실패하였습니다.")
+            }
+        }
+        R.id.height_down -> {
+            try {
+                changeDownHeight(0, -1)
+            } catch (e: Exception) {
+                main.showSnackBar("높이조정에 실패하였습니다.")
+            }
+        }
+        else -> throw IllegalArgumentException("stub!")
+    }
+
+    private fun changeUpX(x: Int, y: Int) {
+        val typeList = draw.setUpX(x, y)
+        draw.resetTemp()
+        presenter.setPlaneXY(typeList)
+        setSideBar()
+        draw.invalidate()
+    }
+
+    private fun changeDownX(x: Int, y: Int) {
+        val typeList = draw.setDownX(x, y)
+        draw.resetTemp()
+        presenter.setPlaneXY(typeList)
+        setSideBar()
+        draw.invalidate()
+    }
+
+    private fun changeUpY(x: Int, y: Int) {
+        val typeList = draw.setXY(x, y)
+        draw.resetTemp()
+        presenter.setPlaneXY(typeList)
+        setSideBar()
+        draw.invalidate()
+    }
+
+    private fun changeDownY(x: Int, y: Int) {
+        val typeList = draw.setXY(x, y)
+        draw.resetTemp()
+        presenter.setPlaneXY(typeList)
+        setSideBar()
+        draw.invalidate()
+    }
+
+    private fun changeUpWidth(x: Int, y: Int) {
+        val typeList = draw.setSize(x, y)
+        draw.resetTemp()
+        presenter.setPlaneXY(typeList)
+        setSideBar()
+        draw.invalidate()
+    }
+
+    private fun changeDownWidth(x: Int, y: Int) {
+        val typeList = draw.setSize(x, y)
+        draw.resetTemp()
+        presenter.setPlaneXY(typeList)
+        setSideBar()
+        draw.invalidate()
+    }
+
+    private fun changeUpHeight(x: Int, y: Int) {
+        val typeList = draw.setSize(x, y)
+        draw.resetTemp()
+        presenter.setPlaneXY(typeList)
+        setSideBar()
+        draw.invalidate()
+    }
+
+    private fun changeDownHeight(x: Int, y: Int) {
+        val typeList = draw.setSize(x, y)
+        draw.resetTemp()
+        presenter.setPlaneXY(typeList)
+        setSideBar()
+        draw.invalidate()
     }
 
     private fun selectPicture() = registerForActivityResult(ActivityResultContracts.GetContent()) {
@@ -166,10 +317,10 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
         draw.setTempSizeValue(widthValue, heightValue)
     }
 
-    override fun setSideBar(count: Int) {
-        setColorText(count)
-        draw.setPositionValue(count, positionXValue, positionYValue)
-        draw.setSizeValue(count, widthValue, heightValue)
+    override fun setSideBar() {
+        setColorText(draw.getClickRectangle())
+        draw.setPositionValue(draw.getClickRectangle(), positionXValue, positionYValue)
+        draw.setSizeValue(draw.getClickRectangle(), widthValue, heightValue)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -178,8 +329,10 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
             MotionEvent.ACTION_DOWN -> {
                 downPointF = PointF(event.x, event.y - 176F)
                 onTouchRectangle(downPointF)
-                if(draw.getClickRectangle() != -1) {
-                    setSideBar(draw.getClickRectangle())
+                try {
+                    setSideBar()
+                } catch (e: Exception) {
+                    main.showSnackBar("그림을 선택하세요.")
                 }
                 draw.invalidate()
             }
@@ -188,8 +341,8 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
                 val length = event.historySize
 
                 if (length != 0 && draw.getClickRectangle() != -1) {
-                    val x = (pointF.x - event.getHistoricalX(0)) * 2.9
-                    val y = (pointF.y - (event.getHistoricalY(0) - 176)) * 2.9
+                    val x = (pointF.x - event.getHistoricalX(0)) * 1.5
+                    val y = (pointF.y - (event.getHistoricalY(0) - 176)) * 1.5
                     draw.setTempXY(x.toInt(), y.toInt())
                     setTempSideBar(draw.getClickRectangle())
                     draw.invalidate()
@@ -200,15 +353,23 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
                 upPointF = PointF(event.x, event.y - 176F)
                 val x = upPointF.x - downPointF.x
                 val y = upPointF.y - downPointF.y
-                val typeList = draw.setXY(x.toInt(), y.toInt())
-                presenter.setPlaneXY(typeList)
-                draw.resetTemp()
-                draw.invalidate()
+                try {
+                    changePoint(x.toInt(), y.toInt())
+                } catch (e: Exception) {
+                    main.showSnackBar("선택 취소")
+                }
             }
         }
         return true
     }
 
+    private fun changePoint(x: Int, y: Int) {
+        val typeList = draw.setXY(x, y)
+        draw.resetTemp()
+        presenter.setPlaneXY(typeList)
+        setSideBar()
+        draw.invalidate()
+    }
 
     override fun drawMessage(message: String) {
         Logger.i(message)
@@ -261,4 +422,5 @@ class RectangleActivity : AppCompatActivity(), Contract.View {
             color.text = ""
         }
     }
+
 }
