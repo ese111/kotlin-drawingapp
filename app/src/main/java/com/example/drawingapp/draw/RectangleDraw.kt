@@ -165,7 +165,7 @@ class RectangleDraw : View {
         return setTypeList
     }
 
-    fun setUpX(x: Int): List<Type> {
+    fun setUpX(x: Int, y: Int): List<Type> {
         var index = 0
         val setTypeList = mutableListOf<Type>()
         drawType.forEach {
@@ -176,7 +176,7 @@ class RectangleDraw : View {
         return setTypeList
     }
 
-    fun setDownX(x: Int): List<Type> {
+    fun setDownX(x: Int, y: Int): List<Type> {
         var index = 0
         val setTypeList = mutableListOf<Type>()
         drawType.forEach {
@@ -187,7 +187,7 @@ class RectangleDraw : View {
         return setTypeList
     }
 
-    fun setUpY(y: Int): List<Type> {
+    fun setUpY(x: Int, y: Int): List<Type> {
         var index = 0
         val setTypeList = mutableListOf<Type>()
         drawType.forEach {
@@ -198,7 +198,7 @@ class RectangleDraw : View {
         return setTypeList
     }
 
-    fun setDownY(y: Int): List<Type> {
+    fun setDownY(x: Int, y: Int): List<Type> {
         var index = 0
         val setTypeList = mutableListOf<Type>()
         drawType.forEach {
@@ -252,7 +252,7 @@ class RectangleDraw : View {
         rect.takeIf { it.click }?.apply {
             changeRect(this, x, y)
         }
-        return rect.copy()
+        return rect
     }
 
     private fun changeRectPoint(rect: Type, x: Int, y: Int) {
@@ -323,75 +323,75 @@ class RectangleDraw : View {
         pic.rect.bottom = pic.point.y
     }
 
-    fun setUpWidth(x: Int): List<Type> {
+    fun setUpWidth(x: Int, y: Int): List<Type> {
         var index = 0
         val setTypeList = mutableListOf<Type>()
         drawType.forEach { rect ->
-            checkSizeUpWidthRange(rect, x)?.let { checkedRect -> setTypeList.add(checkedRect) }
+            checkSizeUpWidthRange(rect, x, y)?.let { checkedRect -> setTypeList.add(checkedRect) }
                 ?: main.showSnackBar("더 이상 크기를 조정 할 수 없습니다")
             index++
         }
         return setTypeList
     }
 
-    fun setDownWidth(x: Int): List<Type> {
+    fun setDownWidth(x: Int, y: Int): List<Type> {
         var index = 0
         val setTypeList = mutableListOf<Type>()
         drawType.forEach { rect ->
-            checkSizeDownWidthRange(rect, x)?.let { checkedRect -> setTypeList.add(checkedRect) }
+            checkSizeDownWidthRange(rect, x, y)?.let { checkedRect -> setTypeList.add(checkedRect) }
                 ?: main.showSnackBar("더 이상 크기를 조정 할 수 없습니다")
             index++
         }
         return setTypeList
     }
 
-    fun setUpHeight(y: Int): List<Type> {
+    fun setUpHeight(x: Int, y: Int): List<Type> {
         var index = 0
         val setTypeList = mutableListOf<Type>()
         drawType.forEach { rect ->
-            checkSizeUpHeightRange(rect, y)?.let { checkedRect -> setTypeList.add(checkedRect) }
+            checkSizeUpHeightRange(rect, x, y)?.let { checkedRect -> setTypeList.add(checkedRect) }
                 ?: main.showSnackBar("더 이상 크기를 조정 할 수 없습니다")
             index++
         }
         return setTypeList
     }
 
-    fun setDownHeight(y: Int): List<Type> {
+    fun setDownHeight(x: Int, y: Int): List<Type> {
         var index = 0
         val setTypeList = mutableListOf<Type>()
         drawType.forEach { rect ->
-            checkSizeDownHeightRange(rect, y)?.let { checkedRect -> setTypeList.add(checkedRect) }
+            checkSizeDownHeightRange(rect, x, y)?.let { checkedRect -> setTypeList.add(checkedRect) }
                 ?: main.showSnackBar("더 이상 크기를 조정 할 수 없습니다")
             index++
         }
         return setTypeList
     }
 
-    private fun checkSizeUpWidthRange(rect: Type, x: Int) =
+    private fun checkSizeUpWidthRange(rect: Type, x: Int, y: Int) =
         when (rect.size.width >= 2200) {
             true -> null
-            false -> startChangeSize(rect, x, 0)
+            false -> startChangeSize(rect, x, y)
         }
 
-    private fun checkSizeDownWidthRange(rect: Type, x: Int) =
+    private fun checkSizeDownWidthRange(rect: Type, x: Int, y: Int) =
         when (rect.size.width <= 1) {
             true -> null
-            false -> startChangeSize(rect, x, 0)
+            false -> startChangeSize(rect, x, y)
         }
 
-    private fun checkSizeUpHeightRange(rect: Type, y: Int) =
+    private fun checkSizeUpHeightRange(rect: Type, x: Int, y: Int) =
         when (rect.size.height >= 1400) {
             true -> null
-            false -> startChangeSize(rect, 0, y)
+            false -> startChangeSize(rect, x, y)
         }
 
-    private fun checkSizeDownHeightRange(rect: Type, y: Int) =
+    private fun checkSizeDownHeightRange(rect: Type, x: Int, y: Int) =
         when (rect.size.height <= 1) {
             true -> null
-            false -> startChangeSize(rect, 0, y)
+            false -> startChangeSize(rect, x, y)
         }
 
-    private fun startChangeSize(rect: Type, x: Int, y: Int) =
+    private fun startChangeSize(rect: Type, x: Int = 0, y: Int = 0) =
         when (rect.type) {
             InputType.RECTANGLE -> {
                 setRectSize(rect, x, y)
@@ -403,14 +403,36 @@ class RectangleDraw : View {
 
     private fun setRectSize(rect: Type, x: Int, y: Int): Type {
         rect.takeIf { it.click }?.apply {
-            val resultX = (this.rect.left + (this.size.width / 2)) - x
-            val resultY = (this.rect.top - (this.size.height / 2)) + y
-            this.rect.left = resultX - (this.size.width / 2)
-            this.rect.top = resultY + (this.size.height / 2)
-            this.size.width += x
-            this.size.height += y
+//            this.point.x = (this.rect.left + (this.size.width / 2)) - x
+//            this.point.y = (this.rect.top - (this.size.height / 2)) + y
+//            this.rect.left = this.point.x - (this.size.width / 2)
+//            this.rect.top = this.point.y + (this.size.height / 2)
+//            this.size.width += x
+//            this.size.height += y
+            resizeRect(rect, x, y)
         }
-        return rect.copy()
+        return rect
+    }
+
+    private fun resizeRect(rect: Type, x: Int, y: Int) {
+        changeResizeRectPointX(rect, x)
+        changeRectPointY(rect, y)
+        changeRectLeftPoint(rect)
+        changeRectTopPoint(rect)
+        changeWidth(rect, x)
+        changeHeight(rect, y)
+    }
+
+    private fun changeResizeRectPointX(rect: Type, x: Int) {
+        rect.point.x = (rect.rect.left + (rect.size.width / 2)) - x
+    }
+
+    private fun changeWidth(rect: Type, x: Int) {
+        rect.size.width += x
+    }
+
+    private fun changeHeight(rect: Type, y: Int) {
+        rect.size.height += y
     }
 
     private fun setPicSize(pic: Type, x: Int, y: Int): Type {
@@ -422,7 +444,7 @@ class RectangleDraw : View {
             this.size.width += x
             this.size.height += y
         }
-        return pic.copy()
+        return pic
     }
 
     fun setTempXY(x: Int, y: Int) {

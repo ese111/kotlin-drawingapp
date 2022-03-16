@@ -231,7 +231,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
     }
 
     private fun changeUpY(x: Int, y: Int) {
-        val typeList = draw.setXY(x, y)
+        val typeList = draw.setUpY(x, y)
         draw.resetTemp()
         presenter.setPlaneXY(typeList)
         setSideBar()
@@ -239,7 +239,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
     }
 
     private fun changeDownY(x: Int, y: Int) {
-        val typeList = draw.setXY(x, y)
+        val typeList = draw.setDownY(x, y)
         draw.resetTemp()
         presenter.setPlaneXY(typeList)
         setSideBar()
@@ -247,7 +247,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
     }
 
     private fun changeUpWidth(x: Int, y: Int) {
-        val typeList = draw.setSize(x, y)
+        val typeList = draw.setUpWidth(x, y)
         draw.resetTemp()
         presenter.setPlaneXY(typeList)
         setSideBar()
@@ -255,7 +255,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
     }
 
     private fun changeDownWidth(x: Int, y: Int) {
-        val typeList = draw.setSize(x, y)
+        val typeList = draw.setDownWidth(x, y)
         draw.resetTemp()
         presenter.setPlaneXY(typeList)
         setSideBar()
@@ -263,7 +263,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
     }
 
     private fun changeUpHeight(x: Int, y: Int) {
-        val typeList = draw.setSize(x, y)
+        val typeList = draw.setUpHeight(x, y)
         draw.resetTemp()
         presenter.setPlaneXY(typeList)
         setSideBar()
@@ -271,7 +271,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
     }
 
     private fun changeDownHeight(x: Int, y: Int) {
-        val typeList = draw.setSize(x, y)
+        val typeList = draw.setDownHeight(x, y)
         draw.resetTemp()
         presenter.setPlaneXY(typeList)
         setSideBar()
