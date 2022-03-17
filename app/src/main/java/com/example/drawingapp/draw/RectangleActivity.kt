@@ -37,6 +37,8 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
 
     private val rectangleColor = mutableListOf<String>()
 
+    private var currentRect: Int = -1
+
     private lateinit var downPointF: PointF
 
     private lateinit var upPointF: PointF
@@ -129,14 +131,14 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
                 if (slider.progress < 10) {
                     slider.progress = 10
                 }
-                if (draw.getClickRectangle() == -1) {
-                    findViewById<ConstraintLayout>(R.id.container).showSnackBar("선택된 사각형이 없습니다.")
+                if (currentRect == -1) {
+                    main.showSnackBar("선택된 사각형이 없습니다.")
                     slider.progress = 1
                     return
                 }
                 val alpha = slider.progress / 10
-                changeAlpha(draw.getClickRectangle(), alpha)
-                setAlpha(draw.getClickRectangle(), alpha)
+                changeAlpha(currentRect, alpha)
+                setAlpha(currentRect, alpha)
             }
         })
 
@@ -298,16 +300,16 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
     }
 
     override fun onTouchRectangle(pointF: PointF) {
-        val count = draw.findRectangle(pointF)
-        if (count == -1) {
+        currentRect = draw.findRectangle(pointF)
+        if (currentRect == -1) {
             draw.setStrokeClean()
             presenter.resetClick()
             draw.resetTemp()
             return
         }
-        presenter.setClick(count)
+        presenter.setClick(currentRect)
         slider.progress =
-            presenter.getAlpha(draw.getClickRectangle())?.times(10)
+            presenter.getAlpha(currentRect)?.times(10)
                 ?: throw IllegalArgumentException("stub!")
     }
 
@@ -318,9 +320,9 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
     }
 
     override fun setSideBar() {
-        setColorText(draw.getClickRectangle())
-        draw.setPositionValue(draw.getClickRectangle(), positionXValue, positionYValue)
-        draw.setSizeValue(draw.getClickRectangle(), widthValue, heightValue)
+        setColorText(currentRect)
+        draw.setPositionValue(currentRect, positionXValue, positionYValue)
+        draw.setSizeValue(currentRect, widthValue, heightValue)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -340,11 +342,11 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
             MotionEvent.ACTION_MOVE -> {
                 val length = event.historySize
 
-                if (length != 0 && draw.getClickRectangle() != -1) {
+                if (length != 0 && currentRect != -1) {
                     val x = (pointF.x - event.getHistoricalX(0)) * 1.5
                     val y = (pointF.y - (event.getHistoricalY(0) - 176)) * 1.5
                     draw.setTempXY(x.toInt(), y.toInt())
-                    setTempSideBar(draw.getClickRectangle())
+                    setTempSideBar(currentRect)
                     draw.invalidate()
                 }
             }

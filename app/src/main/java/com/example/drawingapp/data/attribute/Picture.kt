@@ -6,7 +6,7 @@ import com.example.drawingapp.data.input.InputType
 import com.example.drawingapp.util.generateRandom
 import kotlin.random.Random
 
-data class Picture(
+class Picture(
     private val number: Int,
     private val id: String,
     var bitmap: Bitmap,
@@ -48,7 +48,16 @@ data class Picture(
     }
 
     override fun deepCopy(): Type {
-        return this.copy()
+        val number: Int = this.number
+        val id: String = this.id
+        val bitmap: Bitmap = this.bitmap
+        val point = Point(this.point.x, this.point.y)
+        val alpha: Int = this.alpha
+        val size = Size(this.size.width, this.size.height)
+        val rect = Rect(this.rect.left, this.rect.top, this.rect.right, this.rect.bottom)
+        val type: InputType = InputType.PICTURE
+        val click = false
+        return Picture(number, id, bitmap, point, alpha, size, rect, type, click)
     }
 
     override fun toString() =

@@ -7,7 +7,7 @@ import com.example.drawingapp.data.input.InputType
 import com.example.drawingapp.util.generateRandom
 import kotlin.random.Random
 
-data class Rectangle(
+class Rectangle(
     private val rectNumber: Int,
     private val rectangleId: String,
     private val rectanglePoint: Point,
@@ -19,8 +19,19 @@ data class Rectangle(
     override var click: Boolean = false,
     override val point: Point = Point(rect.left, rect.bottom)
 ) : Type {
+
     override fun deepCopy(): Type {
-        return this.copy()
+        val num: Int = rectNumber
+        val id: String = rectangleId
+        val rectPoint = Point(rectanglePoint.x, rectanglePoint.y)
+        val rectColor = Color(this.color.red, this.color.green, this.color.blue)
+        val alpha: Int = this.alpha
+        val size = Size(this.size.width, this.size.height)
+        val rect = Rect(this.rect.left, this.rect.top, this.rect.right, this.rect.bottom)
+        val type: InputType = InputType.RECTANGLE
+        val click = false
+        val point = Point(this.rect.left, this.rect.bottom)
+        return Rectangle(num, id, rectPoint, rectColor, alpha, size, rect, type, click, point)
     }
 
     override fun toString() =

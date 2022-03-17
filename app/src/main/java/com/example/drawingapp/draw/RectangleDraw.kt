@@ -153,8 +153,7 @@ class RectangleDraw : View {
         }
     }
 
-    fun getClickRectangle() = getClickRectangle
-
+//    fun getClickRectangle() = getClickRectangle
 
     fun setXY(x: Int, y: Int): List<Type> {
         var index = 0
@@ -256,13 +255,21 @@ class RectangleDraw : View {
         return rect
     }
 
-    private fun changeRectPoint(rect: Type, x: Int, y: Int) {
-        rect.point.x = getRectX(rect.rect.left, rect.size.width) + x
-        rect.point.y = getRectY(rect.rect.top, rect.size.height) + y
-        rect.rect.left = getRectLeftPoint(rect.point.x, rect.size.width)
-        rect.rect.top = getRectTopPoint(rect.point.y, rect.size.height)
-        rect.rect.right = getRectRightPoint(rect.point.x, rect.size.width)
-        rect.rect.bottom = getRectBottomPoint(rect.point.y, rect.size.height)
+    private fun changeRectPoint(rectangle: Type, x: Int, y: Int) {
+        with(rectangle) {
+//            point.x += x
+//            point.y += y
+//            rect.left = getRectLeftPoint(point.x, size.width)
+//            rect.top = getRectTopPoint(point.y, size.height)
+//            rect.right = getRectRightPoint(point.x, size.width)
+//            rect.bottom = getRectBottomPoint(point.y, size.height)
+            point.x = getRectX(rect.left, size.width) + x
+            point.y = getRectY(rect.top, size.height) + y
+            rect.left = getRectLeftPoint(point.x, size.width)
+            rect.top = getRectTopPoint(point.y, size.height)
+            rect.right = getRectRightPoint(point.x, size.width)
+            rect.bottom = getRectBottomPoint(point.y, size.height)
+        }
     }
 
     private fun getRectX(left: Int, width: Int) = (left + (width / 2))
@@ -398,12 +405,10 @@ class RectangleDraw : View {
     private fun resizePic(pic: Type, x: Int, y: Int) {
         pic as Picture
         with(pic) {
-            point.x += x
-            point.y += y
-            rect.left = point.x
-            rect.bottom = point.y
+            rect.left = point.x + x
+            rect.bottom = point.y + y
             rect.top = getPicTop(point.y, size.height)
-            rect.right = getRectBottomPoint(point.x, size.width)
+            rect.right = getPicRight(point.x, size.width)
             size.width += x
             size.height += y
             bitmap = Bitmap.createScaledBitmap(bitmap, size.width, size.height, true)
@@ -488,7 +493,7 @@ class RectangleDraw : View {
             if (it.rect.checkContains(pointF.x.toInt(), pointF.y.toInt())) {
                 drawType[count].click = true
                 getClickRectangle = count
-                return count
+                return getClickRectangle
             }
             count++
         }
