@@ -19,11 +19,9 @@ data class Rectangle(
     override var click: Boolean = false,
     override val point: Point = Point(rect.left, rect.bottom)
 ) : Type {
-
     override fun deepCopy(): Type {
         return this.copy()
     }
-
 
     override fun toString() =
         "Rect${rectNumber} (${rectangleId}), X:${rectanglePoint.x},Y:${rectanglePoint.y}, W${size.width}, H${size.height}, " +
