@@ -6,17 +6,17 @@ import com.example.drawingapp.data.input.InputType
 import com.example.drawingapp.util.generateRandom
 import kotlin.random.Random
 
-data class Picture private constructor(
+data class Picture(
     private val number: Int,
     private val id: String,
-    val bitmap: Bitmap,
+    var bitmap: Bitmap,
     override var point: Point,
     override var alpha: Int,
     override val size: Size,
     override val rect: Rect,
     override val type: InputType = InputType.PICTURE,
     override var click: Boolean = false
-) : Type, Cloneable {
+) : Type {
 
     companion object Factory{
         fun make(count: Int, id: Id, bitmap: Bitmap) : Picture {
@@ -47,17 +47,8 @@ data class Picture private constructor(
         }
     }
 
-    override fun copy(): Type {
-        val number: Int = this.number
-        val id: String = this.id
-        val bitmap: Bitmap = this.bitmap
-        val point = Point(this.point.x, this.point.y)
-        val alpha: Int = this.alpha
-        val size = Size(this.size.width, this.size.height)
-        val rect = Rect(this.rect.left, this.rect.top, this.rect.right, this.rect.bottom)
-        val type: InputType = InputType.PICTURE
-        val click = false
-        return Picture(number, id, bitmap, point, alpha, size, rect, type, click)
+    override fun deepCopy(): Type {
+        return this.copy()
     }
 
     override fun toString() =

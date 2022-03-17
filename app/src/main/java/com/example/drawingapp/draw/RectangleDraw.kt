@@ -11,6 +11,7 @@ import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle
 import com.example.drawingapp.data.input.InputType
 import com.example.drawingapp.util.showSnackBar
+import com.orhanobut.logger.Logger
 
 class RectangleDraw : View {
 
@@ -256,72 +257,40 @@ class RectangleDraw : View {
     }
 
     private fun changeRectPoint(rect: Type, x: Int, y: Int) {
-        changeRectPointX(rect, x)
-        changeRectPointY(rect, y)
-        changeRectLeftPoint(rect)
-        changeRectTopPoint(rect)
-        changeRectRightPoint(rect)
-        changeRectBottomPoint(rect)
+        rect.point.x = getRectX(rect.rect.left, rect.size.width) + x
+        rect.point.y = getRectY(rect.rect.top, rect.size.height) + y
+        rect.rect.left = getRectLeftPoint(rect.point.x, rect.size.width)
+        rect.rect.top = getRectTopPoint(rect.point.y, rect.size.height)
+        rect.rect.right = getRectRightPoint(rect.point.x, rect.size.width)
+        rect.rect.bottom = getRectBottomPoint(rect.point.y, rect.size.height)
     }
 
-    private fun changeRectPointX(rect: Type, x: Int) {
-        rect.point.x = (rect.rect.left + (rect.size.width / 2)) + x
-    }
+    private fun getRectX(left: Int, width: Int) = (left + (width / 2))
 
-    private fun changeRectPointY(rect: Type, y: Int) {
-        rect.point.y = (rect.rect.top - (rect.size.height / 2)) + y
-    }
+    private fun getRectY(top: Int, height: Int) = (top - (height / 2))
 
-    private fun changeRectLeftPoint(rect: Type) {
-        rect.rect.left = rect.point.x - (rect.size.width / 2)
-    }
+    private fun getRectLeftPoint(rectX: Int, width: Int) = rectX - (width / 2)
 
-    private fun changeRectTopPoint(rect: Type) {
-        rect.rect.top = rect.point.y + (rect.size.height / 2)
-    }
+    private fun getRectTopPoint(rectY: Int, height: Int) = rectY + (height / 2)
 
-    private fun changeRectRightPoint(rect: Type) {
-        rect.rect.right = rect.point.x + (rect.size.width / 2)
-    }
+    private fun getRectRightPoint(rectX: Int, width: Int) = rectX + (width / 2)
 
-    private fun changeRectBottomPoint(rect: Type) {
-        rect.rect.bottom = rect.point.y - (rect.size.height / 2)
-    }
+    private fun getRectBottomPoint(rectY: Int, height: Int) = rectY - (height / 2)
 
     private fun changePicPoint(pic: Type, x: Int, y: Int) {
-        changePicX(pic, x)
-        changePicY(pic, y)
-        changePicLeft(pic)
-        changePicTop(pic)
-        changePicRight(pic)
-        changePicBottom(pic)
+        with(pic){
+            point.x += x
+            point.y += y
+            rect.left = point.x
+            rect.top = getPicTop(point.y, size.height)
+            rect.right = getPicRight(point.x, size.width)
+            rect.bottom = point.y
+        }
     }
 
-    private fun changePicX(pic: Type, x: Int) {
-        pic.point.x += x
-    }
+    private fun getPicTop(picPointY: Int, height: Int) = picPointY + height
 
-    private fun changePicY(pic: Type, y: Int) {
-        pic.point.y += y
-    }
-
-    private fun changePicLeft(pic: Type) {
-        pic.rect.left = pic.point.x
-    }
-
-    private fun changePicTop(pic: Type) {
-        pic.rect.top = pic.point.y + 120
-
-    }
-
-    private fun changePicRight(pic: Type) {
-        pic.rect.right = pic.point.x + 150
-
-    }
-
-    private fun changePicBottom(pic: Type) {
-        pic.rect.bottom = pic.point.y
-    }
+    private fun getPicRight(picPointX: Int, width: Int) = picPointX + width
 
     fun setUpWidth(x: Int, y: Int): List<Type> {
         var index = 0
@@ -403,48 +372,42 @@ class RectangleDraw : View {
 
     private fun setRectSize(rect: Type, x: Int, y: Int): Type {
         rect.takeIf { it.click }?.apply {
-//            this.point.x = (this.rect.left + (this.size.width / 2)) - x
-//            this.point.y = (this.rect.top - (this.size.height / 2)) + y
-//            this.rect.left = this.point.x - (this.size.width / 2)
-//            this.rect.top = this.point.y + (this.size.height / 2)
-//            this.size.width += x
-//            this.size.height += y
             resizeRect(rect, x, y)
         }
         return rect
     }
 
-    private fun resizeRect(rect: Type, x: Int, y: Int) {
-        changeResizeRectPointX(rect, x)
-        changeRectPointY(rect, y)
-        changeRectLeftPoint(rect)
-        changeRectTopPoint(rect)
-        changeWidth(rect, x)
-        changeHeight(rect, y)
-    }
-
-    private fun changeResizeRectPointX(rect: Type, x: Int) {
-        rect.point.x = (rect.rect.left + (rect.size.width / 2)) - x
-    }
-
-    private fun changeWidth(rect: Type, x: Int) {
-        rect.size.width += x
-    }
-
-    private fun changeHeight(rect: Type, y: Int) {
-        rect.size.height += y
+    private fun resizeRect(rectangle: Type, x: Int, y: Int) {
+        with(rectangle) {
+            point.x = getRectX(rect.left, size.width) - x
+            point.y = getRectY(rect.top, size.height) + y
+            rect.left = getRectLeftPoint(point.x, size.width)
+            rect.top = getRectTopPoint(point.y, size.height)
+            size.width += x
+            size.height += y
+        }
     }
 
     private fun setPicSize(pic: Type, x: Int, y: Int): Type {
         pic.takeIf { it.click }?.apply {
-            this.point.x += x
-            this.point.y += y
-            this.rect.left = this.point.x
-            this.rect.bottom = this.point.y
-            this.size.width += x
-            this.size.height += y
+            resizePic(pic, x, y)
         }
         return pic
+    }
+
+    private fun resizePic(pic: Type, x: Int, y: Int) {
+        pic as Picture
+        with(pic) {
+            point.x += x
+            point.y += y
+            rect.left = point.x
+            rect.bottom = point.y
+            rect.top = getPicTop(point.y, size.height)
+            rect.right = getRectBottomPoint(point.x, size.width)
+            size.width += x
+            size.height += y
+            bitmap = Bitmap.createScaledBitmap(bitmap, size.width, size.height, true)
+        }
     }
 
     fun setTempXY(x: Int, y: Int) {
@@ -466,7 +429,7 @@ class RectangleDraw : View {
     private fun setTemp() {
         if (tempSet.isEmpty()) {
             drawType.filter { it.click }.forEach {
-                tempSet.add(it.copy())
+                tempSet.add(it.deepCopy())
             }
         }
     }
@@ -477,12 +440,12 @@ class RectangleDraw : View {
 
     private fun setTempRectXY(rectangle: Type, x: Int, y: Int) {
         with(rectangle) {
-            val resultX = (rect.left + (size.width / 2)) + x
-            val resultY = (rect.top - (size.height / 2)) + y
-            rect.left = resultX - (size.width / 2)
-            rect.top = resultY + (size.height / 2)
-            rect.right = resultX + (size.width / 2)
-            rect.bottom = resultY - (size.height / 2)
+            point.x = getRectX(rect.left, size.width) + x
+            point.y = getRectY(rect.top, size.height) + y
+            rect.left = getRectLeftPoint(point.x, size.width)
+            rect.top = getRectTopPoint(point.y, size.height)
+            rect.right = getRectRightPoint(point.x, size.width)
+            rect.bottom = getRectBottomPoint(point.y, size.height)
         }
     }
 
@@ -542,17 +505,13 @@ class RectangleDraw : View {
     }
 
     fun setPositionValue(index: Int, XValue: TextView, YValue: TextView) {
-        val x = drawType[index].rect.left + (drawType[index].size.width / 2)
-        val y = drawType[index].rect.top - (drawType[index].size.height / 2)
-        XValue.text = x.toString()
-        YValue.text = y.toString()
+        XValue.text = drawType[index].point.x.toString()
+        YValue.text = drawType[index].point.y.toString()
     }
 
     fun setTempPositionValue(XValue: TextView, YValue: TextView) {
-        val x = tempSet.last().rect.left + (tempSet.last().size.width / 2)
-        val y = tempSet.last().rect.top - (tempSet.last().size.height / 2)
-        XValue.text = x.toString()
-        YValue.text = y.toString()
+        XValue.text = getRectX(tempSet.last().rect.left, tempSet.last().size.width).toString()
+        YValue.text = getRectY(tempSet.last().rect.top, tempSet.last().size.height).toString()
     }
 
     fun setSizeValue(index: Int, width: TextView, height: TextView) {

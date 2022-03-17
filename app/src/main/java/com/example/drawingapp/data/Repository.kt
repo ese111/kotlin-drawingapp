@@ -27,6 +27,6 @@ interface Repository {
 
     fun setPictureInPlane(bitmap: Bitmap)
 
-    fun getLastPlane(): Type
+    fun getLastPlane(): Type?
 
 }

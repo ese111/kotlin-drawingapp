@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import com.example.drawingapp.data.attribute.Id
 import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle
+import com.orhanobut.logger.Logger
 
 class RectangleRepository : Repository {
     private var count = 1
@@ -34,8 +35,9 @@ class RectangleRepository : Repository {
         return pic
     }
 
-    override fun getLastPlane() =
-        plane.list.value?.last() ?: throw NullPointerException("nothing plane")
+    override fun getLastPlane(): Type? {
+        return plane.list.value?.last()
+    }
 
     override fun setRectangleInPlane() {
         val rect = makeRectangle()

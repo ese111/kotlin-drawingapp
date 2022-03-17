@@ -12,6 +12,6 @@ interface Type {
     val type: InputType
     var click: Boolean
     var alpha: Int
-    fun copy(): Type
+    fun deepCopy(): Type
 }
 
