@@ -1,6 +1,7 @@
 package com.example.drawingapp
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.Rect
 import com.example.drawingapp.data.Plane
@@ -28,30 +29,18 @@ interface Contract {
 
         fun changeAlpha(index: Int, alpha: Int)
 
-        fun setSideBar(count: Int)
+        fun setSideBar()
     }
 
     interface Presenter {
 
         fun plane() : Plane
 
-        fun getRectangleLog(): String
-
         fun onClickLog()
-
-        fun getRectangle(): Rectangle
-
-        fun getPicture(bitmap: Bitmap): Picture
 
         fun setAlpha(index: Int, value: Int)
 
-        fun setPlane()
-
-        fun setPlane(bitmap: Bitmap)
-
         fun getAlpha(index: Int): Int?
-
-        fun getInput(inputType: InputType): InputFactory
 
         fun setPlaneXY(typeList: List<Type>)
 
@@ -62,6 +51,10 @@ interface Contract {
         fun resetClick()
 
         fun setClick(index: Int)
+
+        fun setPictureInPlane(bitmap: Bitmap)
+
+        fun setRectangleInPlane()
 
     }
 
