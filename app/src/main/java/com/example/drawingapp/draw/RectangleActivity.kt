@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MotionEvent
 import android.view.View
+import android.view.View.inflate
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.SeekBar
@@ -14,10 +15,12 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.RecyclerView
 import com.example.drawingapp.Contract
 import com.example.drawingapp.R
 import com.example.drawingapp.data.RectangleRepository
 import com.example.drawingapp.data.Text
+import com.example.drawingapp.data.Type
 import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle
 import com.example.drawingapp.util.showSnackBar
@@ -67,10 +70,20 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
 
     private lateinit var addText: Button
 
+    private lateinit var drawListView: RecyclerView
+
+    private lateinit var drawListViewAdapter: RecyclerView.Adapter<DrawAdapter.ViewHolder>
+
+    private var drawList: List<Type>? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         Logger.addLogAdapter(AndroidLogAdapter())
+
+        drawListView = findViewById(R.id.draw_list_view)
+        drawList = arrayListOf()
+        drawListViewAdapter = DrawAdapter(drawList)
 
         main = findViewById(R.id.container)
         draw = findViewById(R.id.draw_rectangle)
@@ -122,7 +135,6 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
 
         slider = findViewById(R.id.slider_invisible)
 
-
         slider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
 
@@ -158,16 +170,19 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
 //            presenter.onClickLog()
             presenter.setRectangleInPlane()
             presenter.drawRectangle { rect -> drawRectangle(rect) }
+            addDrawList()
         }
 
         R.id.add_pic_btn -> {
             getContent.launch("image/*")
+            addDrawList()
         }
 
         R.id.add_text -> {
             try {
                 presenter.setTextInPlane()
                 presenter.drawText { text -> drawText(text) }
+                addDrawList()
             } catch (e: Exception) {
                 main.showSnackBar("텍스트 생성에 실패하였습니다.")
             }
@@ -345,6 +360,12 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
     override fun setSideBar() {
         setColorText(currentRect)
         draw.setSidebarRectInfoText(positionXValue, positionYValue, widthValue, heightValue)
+    }
+
+    override fun addDrawList() {
+        val plane = presenter.plane()
+        drawList = plane.list.getList()
+        drawListViewAdapter.notifyDataSetChanged()
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {

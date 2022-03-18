@@ -2,6 +2,7 @@ package com.example.drawingapp.draw
 
 import android.graphics.Bitmap
 import com.example.drawingapp.Contract
+import com.example.drawingapp.data.Plane
 import com.example.drawingapp.data.Repository
 import com.example.drawingapp.data.Text
 import com.example.drawingapp.data.Type

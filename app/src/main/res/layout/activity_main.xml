@@ -21,10 +21,21 @@
         android:id="@+id/add_pic_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/pic_button"
+        android:text="@string/add_image_label"
+        app:layout_constraintStart_toEndOf="@+id/btn_make_rectangle"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_make_rectangle" />
+        android:background="@drawable/pic_button"
+        />
 
+    <Button
+        android:id="@+id/add_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_text_label"
+        app:layout_constraintStart_toEndOf="@+id/add_pic_btn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/add_text_shape"
+        />
     <include
         android:id="@+id/include2"
         layout="@layout/navbar"
@@ -38,5 +49,15 @@
         android:id="@+id/draw_rectangle"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/draw_list_view"
+        android:background="#E6E6E6"
+        android:layout_width="150dp"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

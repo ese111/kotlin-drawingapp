@@ -7,7 +7,7 @@ import com.example.drawingapp.util.generateRandom
 import kotlin.random.Random
 
 class Picture(
-    private val number: Int,
+    override val number: Int,
     private val id: String,
     var bitmap: Bitmap,
     override var point: Point,

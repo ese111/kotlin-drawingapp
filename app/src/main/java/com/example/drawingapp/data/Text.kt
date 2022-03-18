@@ -12,7 +12,7 @@ import com.example.drawingapp.util.generateRandom
 import kotlin.random.Random
 
 class Text(
-    private val number: Int,
+    override val number: Int,
     private val id: String,
     val color: Color,
     val value: String,
