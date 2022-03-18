@@ -58,6 +58,7 @@ interface Contract {
         fun drawRectangle(draw: (Rectangle) -> Unit)
 
         fun drawText(draw: (Text) -> Unit)
+        fun getLastRectangle(): Type?
     }
 
 }

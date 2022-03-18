@@ -18,7 +18,7 @@ class RectanglePresenter(
 
     override fun onClickLog() = view.drawMessage(getLastRectangle().toString())
 
-    private fun getLastRectangle() = repository.getLastPlane()
+    override fun getLastRectangle() = repository.getLastPlane()
 
     override fun setPlaneXY(typeList: List<Type>) {
         repository.setPlaneXY(typeList)

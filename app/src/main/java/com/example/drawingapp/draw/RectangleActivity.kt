@@ -1,12 +1,12 @@
 package com.example.drawingapp.draw
 
+import android.annotation.SuppressLint
 import android.graphics.*
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.inflate
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.SeekBar
@@ -15,6 +15,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.drawingapp.Contract
 import com.example.drawingapp.R
@@ -74,7 +75,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
 
     private lateinit var drawListViewAdapter: RecyclerView.Adapter<DrawAdapter.ViewHolder>
 
-    private var drawList: List<Type>? = null
+    private var drawList = mutableListOf<Type>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,8 +83,10 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
         Logger.addLogAdapter(AndroidLogAdapter())
 
         drawListView = findViewById(R.id.draw_list_view)
-        drawList = arrayListOf()
         drawListViewAdapter = DrawAdapter(drawList)
+        drawListView.adapter = drawListViewAdapter
+        drawListView.setItemViewCacheSize(10)
+        drawListView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 
         main = findViewById(R.id.container)
         draw = findViewById(R.id.draw_rectangle)
@@ -163,6 +166,12 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
         plane.list.observe(this) {
             draw.invalidate()
         }
+
+        draw.setOnTouchListener { view, event ->
+            onTouch(event)
+            view.performClick()
+            true
+        }
     }
 
     override fun onClick(view: View?) = when (view?.id) {
@@ -175,7 +184,6 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
 
         R.id.add_pic_btn -> {
             getContent.launch("image/*")
-            addDrawList()
         }
 
         R.id.add_text -> {
@@ -328,6 +336,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
         val scaleBitmap = Bitmap.createScaledBitmap(bitmap, 150, 120, true)
         presenter.setPictureInPlane(scaleBitmap)
         presenter.drawPicture { pic -> drawPicture(pic) }
+        addDrawList()
     }
 
     override fun changeAlpha(index: Int, alpha: Int) {
@@ -363,16 +372,19 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
     }
 
     override fun addDrawList() {
-        val plane = presenter.plane()
-        drawList = plane.list.getList()
-        drawListViewAdapter.notifyDataSetChanged()
+        val plane = presenter.getLastRectangle()
+        if (plane != null) {
+            drawList.add(plane)
+        }
+        Logger.e("efasdfffd")
+        drawListViewAdapter.notifyItemChanged(drawList.size-1)
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        val pointF = PointF(event!!.x, event.y - 176F)
+    private fun onTouch(event: MotionEvent?) {
+        val pointF = PointF(event!!.x, event.y)
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                downPointF = PointF(event.x, event.y - 176F)
+                downPointF = PointF(event.x, event.y)
                 onTouchRectangle(downPointF)
                 try {
                     setSideBar()
@@ -387,7 +399,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
 
                 if (length != 0 && currentRect != -1) {
                     val x = (pointF.x - event.getHistoricalX(0)) * 1.5
-                    val y = (pointF.y - (event.getHistoricalY(0) - 176)) * 1.5
+                    val y = (pointF.y - (event.getHistoricalY(0))) * 1.5
                     draw.setTempXY(x.toInt(), y.toInt())
                     setTempSideBar(currentRect)
                     draw.invalidate()
@@ -395,7 +407,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
             }
 
             MotionEvent.ACTION_UP -> {
-                upPointF = PointF(event.x, event.y - 176F)
+                upPointF = PointF(event.x, event.y)
                 val x = upPointF.x - downPointF.x
                 val y = upPointF.y - downPointF.y
                 try {
@@ -405,7 +417,6 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
                 }
             }
         }
-        return true
     }
 
     private fun changePoint(x: Int, y: Int) {

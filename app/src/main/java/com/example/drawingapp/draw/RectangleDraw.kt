@@ -3,7 +3,7 @@ package com.example.drawingapp.draw
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -38,6 +38,10 @@ class RectangleDraw : View {
     private val tempSet = mutableSetOf<Type>()
 
     private lateinit var main: ConstraintLayout
+
+    private lateinit var downPointF: PointF
+
+    private lateinit var upPointF: PointF
 
     fun initView(view: View) {
         main = view as ConstraintLayout
@@ -666,5 +670,9 @@ class RectangleDraw : View {
         val text = tempSet.last() as Text
         width.text = text.textSize.toString()
         height.text = ""
+    }
+
+    override fun performClick(): Boolean {
+        return true
     }
 }

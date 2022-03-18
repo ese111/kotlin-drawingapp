@@ -1,6 +1,7 @@
 package com.example.drawingapp.draw
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,6 +42,9 @@ class DrawAdapter(private val data: List<Type>?) : RecyclerView.Adapter<DrawAdap
             InputType.TEXT -> {
                 holder.imageView.setImageResource(R.drawable.baseline_title_24)
                 holder.textView.text = "Text${data[position].number}"
+            }
+            else -> {
+                Log.d("new dataType" , "new Type!! ${data?.get(position)?.type}")
             }
         }
     }
