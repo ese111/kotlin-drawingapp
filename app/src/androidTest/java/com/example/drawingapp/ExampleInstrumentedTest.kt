@@ -2,6 +2,7 @@ package com.example.drawingapp
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.drawingapp.draw.RectangleDraw
 
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,4 +22,5 @@ class ExampleInstrumentedTest {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("com.example.drawingapp", appContext.packageName)
     }
+
 }

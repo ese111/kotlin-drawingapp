@@ -17,12 +17,12 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.drawingapp.Contract
 import com.example.drawingapp.R
 import com.example.drawingapp.data.RectangleRepository
+import com.example.drawingapp.data.Text
 import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle
 import com.example.drawingapp.util.showSnackBar
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
-import kotlin.Exception
 
 
 class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListener {
@@ -65,6 +65,8 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
 
     private lateinit var getContent: ActivityResultLauncher<String?>
 
+    private lateinit var addText: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -84,9 +86,11 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
 
         addRectButton = findViewById(R.id.btn_make_rectangle)
         addPictureButton = findViewById(R.id.add_pic_btn)
+        addText = findViewById(R.id.add_text)
 
         addRectButton.setOnClickListener(this)
         addPictureButton.setOnClickListener(this)
+        addText.setOnClickListener(this)
 
         positionXValue = findViewById(R.id.x_position)
         positionXUp = findViewById(R.id.x_position_up)
@@ -117,6 +121,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
         heightDown.setOnClickListener(this)
 
         slider = findViewById(R.id.slider_invisible)
+
 
         slider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
@@ -152,128 +157,147 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
         R.id.btn_make_rectangle -> {
 //            presenter.onClickLog()
             presenter.setRectangleInPlane()
-            presenter.drawRectangle()
+            presenter.drawRectangle { rect -> drawRectangle(rect) }
         }
+
         R.id.add_pic_btn -> {
             getContent.launch("image/*")
         }
+
+        R.id.add_text -> {
+            try {
+                presenter.setTextInPlane()
+                presenter.drawText { text -> drawText(text) }
+            } catch (e: Exception) {
+                main.showSnackBar("텍스트 생성에 실패하였습니다.")
+            }
+        }
+
         R.id.x_position_up -> {
             try {
-                changeUpX(1, 0)
+                changeUpX()
             } catch (e: Exception) {
                 main.showSnackBar("좌표조정에 실패하였습니다.")
             }
         }
+
         R.id.x_position_down -> {
             try {
-                changeDownX(-1, 0)
+                changeDownX()
             } catch (e: Exception) {
                 main.showSnackBar("좌표조정에 실패하였습니다.")
             }
         }
+
         R.id.y_position_up -> {
             try {
-                changeUpY(0, -1)
+                changeUpY()
             } catch (e: Exception) {
                 main.showSnackBar("좌표조정에 실패하였습니다.")
             }
         }
+
         R.id.y_position_down -> {
             try {
-                changeDownY(0, 1)
+                changeDownY()
             } catch (e: Exception) {
                 main.showSnackBar("좌표조정에 실패하였습니다.")
             }
         }
+
         R.id.width_up -> {
             try {
-                changeUpWidth(1, 0)
+                changeUpWidth()
             } catch (e: Exception) {
                 main.showSnackBar("넓이조정에 실패하였습니다.")
             }
         }
+
         R.id.width_down -> {
             try {
-                changeDownWidth(-1, 0)
+                changeDownWidth()
             } catch (e: Exception) {
                 main.showSnackBar("넓이조정에 실패하였습니다.")
             }
         }
+
         R.id.height_up -> {
             try {
-                changeUpHeight(0, 1)
+                changeUpHeight()
             } catch (e: Exception) {
                 main.showSnackBar("높이조정에 실패하였습니다.")
             }
         }
+
         R.id.height_down -> {
             try {
-                changeDownHeight(0, -1)
+                changeDownHeight()
             } catch (e: Exception) {
                 main.showSnackBar("높이조정에 실패하였습니다.")
             }
         }
+
         else -> throw IllegalArgumentException("stub!")
     }
 
-    private fun changeUpX(x: Int, y: Int) {
-        val typeList = draw.setUpX(x, y)
+    private fun changeUpX() {
+        val typeList = draw.setUpX()
         draw.resetTemp()
         presenter.setPlaneXY(typeList)
         setSideBar()
         draw.invalidate()
     }
 
-    private fun changeDownX(x: Int, y: Int) {
-        val typeList = draw.setDownX(x, y)
+    private fun changeDownX() {
+        val typeList = draw.setDownX()
         draw.resetTemp()
         presenter.setPlaneXY(typeList)
         setSideBar()
         draw.invalidate()
     }
 
-    private fun changeUpY(x: Int, y: Int) {
-        val typeList = draw.setUpY(x, y)
+    private fun changeUpY() {
+        val typeList = draw.setUpY()
         draw.resetTemp()
         presenter.setPlaneXY(typeList)
         setSideBar()
         draw.invalidate()
     }
 
-    private fun changeDownY(x: Int, y: Int) {
-        val typeList = draw.setDownY(x, y)
+    private fun changeDownY() {
+        val typeList = draw.setDownY()
         draw.resetTemp()
         presenter.setPlaneXY(typeList)
         setSideBar()
         draw.invalidate()
     }
 
-    private fun changeUpWidth(x: Int, y: Int) {
-        val typeList = draw.setUpWidth(x, y)
+    private fun changeUpWidth() {
+        val typeList = draw.setUpWidth()
         draw.resetTemp()
         presenter.setPlaneXY(typeList)
         setSideBar()
         draw.invalidate()
     }
 
-    private fun changeDownWidth(x: Int, y: Int) {
-        val typeList = draw.setDownWidth(x, y)
+    private fun changeDownWidth() {
+        val typeList = draw.setDownWidth()
         draw.resetTemp()
         presenter.setPlaneXY(typeList)
         setSideBar()
         draw.invalidate()
     }
 
-    private fun changeUpHeight(x: Int, y: Int) {
-        val typeList = draw.setUpHeight(x, y)
+    private fun changeUpHeight() {
+        val typeList = draw.setUpHeight()
         draw.resetTemp()
         presenter.setPlaneXY(typeList)
         setSideBar()
         draw.invalidate()
     }
 
-    private fun changeDownHeight(x: Int, y: Int) {
-        val typeList = draw.setDownHeight(x, y)
+    private fun changeDownHeight() {
+        val typeList = draw.setDownHeight()
         draw.resetTemp()
         presenter.setPlaneXY(typeList)
         setSideBar()
@@ -288,7 +312,7 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
         }
         val scaleBitmap = Bitmap.createScaledBitmap(bitmap, 150, 120, true)
         presenter.setPictureInPlane(scaleBitmap)
-        presenter.drawPicture()
+        presenter.drawPicture { pic -> drawPicture(pic) }
     }
 
     override fun changeAlpha(index: Int, alpha: Int) {
@@ -315,14 +339,12 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
 
     private fun setTempSideBar(count: Int) {
         setColorText(count)
-        draw.setTempPositionValue(positionXValue, positionYValue)
-        draw.setTempSizeValue(widthValue, heightValue)
+        draw.setTextWhenMovingRect(positionXValue, positionYValue, widthValue, heightValue)
     }
 
     override fun setSideBar() {
         setColorText(currentRect)
-        draw.setPositionValue(currentRect, positionXValue, positionYValue)
-        draw.setSizeValue(currentRect, widthValue, heightValue)
+        draw.setSidebarRectInfoText(positionXValue, positionYValue, widthValue, heightValue)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -377,16 +399,22 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
         Logger.i(message)
     }
 
-    override fun drawRectangle(rectangle: Rectangle) {
+    private fun drawRectangle(rectangle: Rectangle) {
         draw.setDrawType(rectangle)
         setPaints(rectangle)
         rectangleColor.add(setColor(rectangle.color))
     }
 
-    override fun drawPicture(picture: Picture) {
+    private fun drawPicture(picture: Picture) {
         draw.setDrawType(picture)
         setPaints(picture)
         rectangleColor.add("image")
+    }
+
+    private fun drawText(text: Text) {
+        draw.setDrawType(text)
+        setPaints(text)
+        rectangleColor.add(setColor(text.color))
     }
 
     private fun setPaints(rectangle: Rectangle) {
@@ -405,6 +433,19 @@ class RectangleActivity : AppCompatActivity(), Contract.View, View.OnClickListen
 
     private fun setPaints(picture: Picture) {
         val paint = Paint().apply { alpha = picture.alpha * 25 }
+        draw.setPaints(paint)
+    }
+
+    private fun setPaints(text: Text) {
+        val paint = Paint().apply {
+            color = Color.argb(
+                text.alpha * 25,
+                text.color.red,
+                text.color.green,
+                text.color.blue
+            )
+            textSize = text.textSize
+        }
         draw.setPaints(paint)
     }
 

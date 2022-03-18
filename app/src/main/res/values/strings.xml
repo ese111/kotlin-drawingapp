@@ -2,4 +2,5 @@
     <string name="app_name">drawingApp</string>
     <string name="btn_make_rectangle_label">사각형</string>
     <string name="add_image_label">사진 추가</string>
+    <string name="add_text_label">텍스트</string>
 </resources>

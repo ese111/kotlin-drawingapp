@@ -3,6 +3,7 @@ package com.example.drawingapp.draw
 import android.graphics.Bitmap
 import com.example.drawingapp.Contract
 import com.example.drawingapp.data.Repository
+import com.example.drawingapp.data.Text
 import com.example.drawingapp.data.Type
 import com.example.drawingapp.data.attribute.Picture
 import com.example.drawingapp.data.attribute.Rectangle
@@ -24,6 +25,8 @@ class RectanglePresenter(
 
     override fun setRectangleInPlane() = repository.setRectangleInPlane()
 
+    override fun setTextInPlane() = repository.setTextInPlane()
+
     override fun setPictureInPlane(bitmap: Bitmap) = repository.setPictureInPlane(bitmap)
 
     override fun setAlpha(index: Int, value: Int) {
@@ -32,15 +35,21 @@ class RectanglePresenter(
 
     override fun getAlpha(index: Int) = repository.getAlpha(index)
 
-    override fun drawPicture() {
+    override fun drawPicture(drawPicture: (Picture) -> Unit) {
         val picture = repository.getLastPlane() as Picture
-        view.drawPicture(picture)
+        drawPicture(picture)
     }
 
-    override fun drawRectangle() {
+    override fun drawRectangle(draw: (Rectangle) -> Unit) {
         val rectangle = repository.getLastPlane() as Rectangle
-        view.drawRectangle(rectangle)
+        draw(rectangle)
     }
+
+    override fun drawText(draw: (Text) -> Unit) {
+        val text = repository.getLastPlane() as Text
+        draw(text)
+    }
+
 
     override fun resetClick() {
         repository.resetClick()

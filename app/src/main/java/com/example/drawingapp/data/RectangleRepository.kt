@@ -29,15 +29,19 @@ class RectangleRepository : Repository {
         return rect
     }
 
+    private fun makeText(): Text {
+        val text = Text.make(count, id)
+        count++
+        return text
+    }
+
     private fun makePicture(bitmap: Bitmap): Picture {
         val pic = Picture.make(count, id, bitmap)
         count++
         return pic
     }
 
-    override fun getLastPlane(): Type? {
-        return plane.list.value?.last()
-    }
+    override fun getLastPlane() = plane.list.value?.last()
 
     override fun setRectangleInPlane() {
         val rect = makeRectangle()
@@ -46,6 +50,11 @@ class RectangleRepository : Repository {
 
     override fun setPictureInPlane(bitmap: Bitmap) {
         val pic = makePicture(bitmap)
+        plane.setPlane(pic)
+    }
+
+    override fun setTextInPlane() {
+        val pic = makeText()
         plane.setPlane(pic)
     }
 

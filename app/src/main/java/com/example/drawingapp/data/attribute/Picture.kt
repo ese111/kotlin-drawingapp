@@ -45,6 +45,7 @@ class Picture(
         private fun getRect(point: Point): Rect {
             return Rect(point.x, point.y + Size().height, point.x + Size().width, point.y)
         }
+
     }
 
     override fun deepCopy(): Type {
@@ -53,10 +54,10 @@ class Picture(
         val bitmap: Bitmap = this.bitmap
         val point = Point(this.point.x, this.point.y)
         val alpha: Int = this.alpha
-        val size = Size(this.size.width, this.size.height)
+        val size = this.size.copy()
         val rect = Rect(this.rect.left, this.rect.top, this.rect.right, this.rect.bottom)
-        val type: InputType = InputType.PICTURE
-        val click = false
+        val type: InputType = this.type
+        val click = this.click
         return Picture(number, id, bitmap, point, alpha, size, rect, type, click)
     }
 

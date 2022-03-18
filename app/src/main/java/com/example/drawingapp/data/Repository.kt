@@ -29,4 +29,5 @@ interface Repository {
 
     fun getLastPlane(): Type?
 
+    fun setTextInPlane()
 }
